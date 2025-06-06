@@ -347,7 +347,7 @@
     <div class="container">
         <div class="header">
             <h1 class="main-title">🌙 Eid Blessing Collector 🌟</h1>
-            <p class="subtitle">Collect blessings before they disappear! Keep your success rate above 50%!</p>
+            <p class="subtitle">Collect blessings before they disappear! Keep your success rate above 65%!</p>
         </div>
 
         <div class="game-area">
@@ -356,7 +356,7 @@
                 <div class="progress-bar">
                     <div class="progress-fill" id="levelProgressBar" style="width: 0%"></div>
                 </div>
-                <div style="font-size: 0.9rem; margin-top: 5px;">Time: <span id="timeRemaining">45</span>s | Speed: <span id="gameSpeed">Peaceful</span></div>
+                <div style="font-size: 0.9rem; margin-top: 5px;">Time: <span id="timeRemaining">30</span>s | Speed: <span id="gameSpeed">Fast</span></div>
             </div>
 
             <div class="game-stats">
@@ -374,12 +374,12 @@
                 </div>
                 <div class="stat-item">
                     <div>🎯 Level Progress</div>
-                    <div class="stat-value" id="levelProgress">0/5</div>
+                    <div class="stat-value" id="levelProgress">0/7</div>
                 </div>
             </div>
 
             <div class="message-display" id="messageDisplay">
-                Get ready! Level 1 starting... Collect blessings and keep above 50% success rate!
+                Get ready! Level 1 starting... Collect blessings and keep above 65% success rate!
             </div>
 
             <div class="moon-collector" id="moonCollector">
@@ -408,18 +408,19 @@
             spawned: 0,
             missed: 0,
             streak: 0,
-            timeRemaining: 45,
+            timeRemaining: 30, // Reduced from 45
             isPlaying: false,
             isPaused: false,
             isGameOver: false,
             spawnInterval: null,
             gameTimer: null,
             levelTimer: null,
-            spawnRate: 1200,
-            itemLifetime: 4000,
-            itemSpeed: 4000,
-            levelTarget: 5,
-            levelCollected: 0
+            spawnRate: 800, // Faster initial spawn
+            itemLifetime: 2500, // Shorter lifetime
+            itemSpeed: 2500,
+            levelTarget: 7, // Increased from 5
+            levelCollected: 0,
+            successThreshold: 65 // Increased from 50%
         };
 
         const levelNames = [
@@ -497,6 +498,24 @@
             gameState.spawned++;
             updateDisplay();
             
+            // Add random movement for higher levels
+            if (gameState.level > 3) {
+                const moveDirection = Math.random() < 0.5 ? 1 : -1;
+                const moveSpeed = gameState.level * 0.5;
+                let currentPos = parseFloat(item.style.left);
+                
+                const moveInterval = setInterval(() => {
+                    if (!item.parentElement || gameState.isGameOver) {
+                        clearInterval(moveInterval);
+                        return;
+                    }
+                    currentPos += moveDirection * moveSpeed;
+                    if (currentPos < 0) currentPos = maxX;
+                    if (currentPos > maxX) currentPos = 0;
+                    item.style.left = currentPos + 'px';
+                }, 50);
+            }
+            
             item.onclick = function() {
                 if (gameState.isGameOver) return;
                 
@@ -504,11 +523,11 @@
                 gameState.levelCollected++;
                 gameState.streak++;
                 
-                // Increase speed after each blessing collected
-                gameState.spawnRate = Math.max(300, gameState.spawnRate - 50);
-                gameState.itemLifetime = Math.max(2000, gameState.itemLifetime - 100);
+                // More aggressive speed increase
+                gameState.spawnRate = Math.max(200, gameState.spawnRate - 80);
+                gameState.itemLifetime = Math.max(1000, gameState.itemLifetime - 150);
                 
-                // Level up after collecting 5 blessings
+                // Level up after collecting target blessings
                 if (gameState.levelCollected >= gameState.levelTarget) {
                     levelUp();
                     clearInterval(gameState.spawnInterval);
@@ -522,12 +541,12 @@
                 );
                 
                 const messages = [
-                    `Barakallahu feeki! (${gameState.levelCollected}/5) ✨`, 
-                    `Masha'Allah! (${gameState.levelCollected}/5) 🌟`, 
-                    `Alhamdulillah! (${gameState.levelCollected}/5) 🤲`,
-                    `Excellent! (${gameState.levelCollected}/5) 🎊`, 
-                    `Keep going! (${gameState.levelCollected}/5) 💫`, 
-                    `Well done! (${gameState.levelCollected}/5) 🌙`
+                    `Barakallahu feeki! (${gameState.levelCollected}/${gameState.levelTarget}) ✨`, 
+                    `Masha'Allah! (${gameState.levelCollected}/${gameState.levelTarget}) 🌟`, 
+                    `Alhamdulillah! (${gameState.levelCollected}/${gameState.levelTarget}) 🤲`,
+                    `Excellent! (${gameState.levelCollected}/${gameState.levelTarget}) 🎊`, 
+                    `Keep going! (${gameState.levelCollected}/${gameState.levelTarget}) 💫`, 
+                    `Well done! (${gameState.levelCollected}/${gameState.levelTarget}) 🌙`
                 ];
                 showMessage(messages[Math.floor(Math.random() * messages.length)]);
                 item.remove();
@@ -570,10 +589,10 @@
             // Don't check if already game over
             if (gameState.isGameOver) return true;
             
-            // Game over if success rate falls below 50% (after spawning at least 10 items)
-            if (gameState.spawned >= 10) {
+            // Game over if success rate falls below threshold (after spawning at least 8 items)
+            if (gameState.spawned >= 8) {
                 const successRate = (gameState.collected / gameState.spawned) * 100;
-                if (successRate < 50) {
+                if (successRate < gameState.successThreshold) {
                     return true;
                 }
             }
@@ -589,13 +608,21 @@
         function levelUp() {
             gameState.level++;
             gameState.levelCollected = 0; // Reset level progress
-            gameState.timeRemaining = 45; // Reset timer for new level
+            gameState.timeRemaining = Math.max(20, 35 - gameState.level * 2); // Less time each level
             
-            // Additional speed boost when leveling up
-            gameState.spawnRate = Math.max(300, gameState.spawnRate - 100);
-            gameState.itemLifetime = Math.max(2000, gameState.itemLifetime - 200);
+            // More aggressive speed boost when leveling up
+            gameState.spawnRate = Math.max(200, gameState.spawnRate - 150);
+            gameState.itemLifetime = Math.max(800, gameState.itemLifetime - 300);
             
-            showMessage(`Level ${gameState.level} - ${levelNames[Math.min(gameState.level - 1, levelNames.length - 1)]}! Collect 5 more blessings! 🚀`);
+            // Increase targets for higher levels
+            if (gameState.level > 5) {
+                gameState.levelTarget = 8;
+            }
+            if (gameState.level > 8) {
+                gameState.levelTarget = 10;
+            }
+            
+            showMessage(`Level ${gameState.level} - ${levelNames[Math.min(gameState.level - 1, levelNames.length - 1)]}! Collect ${gameState.levelTarget} more blessings! 🚀`);
             
             // Celebration fireworks
             for (let i = 0; i < 8; i++) {
@@ -646,7 +673,7 @@
             }, 500);
             
             popup.classList.add('show');
-            showMessage(`Game Over! Success rate dropped below 50% (${finalSuccessRate}%)`);
+            showMessage(`Game Over! Success rate dropped below ${gameState.successThreshold}% (${finalSuccessRate}%)`);
         }
 
         function startGame() {
@@ -655,7 +682,7 @@
             gameState.isPlaying = true;
             gameState.isPaused = false;
             gameState.isGameOver = false;
-            gameState.timeRemaining = 45;
+            gameState.timeRemaining = 30;
             
             document.getElementById('startBtn').disabled = true;
             document.getElementById('pauseBtn').disabled = false;
@@ -664,6 +691,17 @@
             
             // Spawn items
             gameState.spawnInterval = setInterval(spawnBlessingItem, gameState.spawnRate);
+            
+            // Spawn multiple items at higher levels
+            if (gameState.level > 2) {
+                setTimeout(() => {
+                    setInterval(() => {
+                        if (gameState.level > 5 && Math.random() < 0.3) {
+                            spawnBlessingItem();
+                        }
+                    }, gameState.spawnRate * 2);
+                }, 1000);
+            }
             
             // Game timer
             gameState.gameTimer = setInterval(() => {
@@ -679,7 +717,7 @@
                         return;
                     } else {
                         // This shouldn't happen as level up resets timer
-                        gameState.timeRemaining = 45;
+                        gameState.timeRemaining = 30;
                     }
                 }
                 
@@ -715,18 +753,19 @@
                 spawned: 0,
                 missed: 0,
                 streak: 0,
-                timeRemaining: 45,
+                timeRemaining: 30,
                 isPlaying: false,
                 isPaused: false,
                 isGameOver: false,
                 spawnInterval: null,
                 gameTimer: null,
                 levelTimer: null,
-                spawnRate: 1200,
-                itemLifetime: 4000,
-                itemSpeed: 4000,
-                levelTarget: 5,
-                levelCollected: 0
+                spawnRate: 800,
+                itemLifetime: 2500,
+                itemSpeed: 2500,
+                levelTarget: 7,
+                levelCollected: 0,
+                successThreshold: 65
             };
             
             // Clear intervals
@@ -746,7 +785,7 @@
             document.getElementById('gameOverPopup').classList.remove('show');
             
             updateDisplay();
-            showMessage('Game Reset! Collect 5 blessings per level, maintain 50%+ success rate! 🎮');
+            showMessage('Game Reset! Collect 7 blessings per level, maintain 65%+ success rate! 🎮');
         }
 
         function closeGameOver() {
@@ -757,7 +796,7 @@
         // Initialize the game
         createStars();
         updateDisplay();
-        showMessage('Welcome to Eid Blessing Collector! Collect 5 blessings per level while keeping 50%+ accuracy! 🌙');
+        showMessage('Welcome to Eid Blessing Collector! Collect 7 blessings per level while keeping 65%+ accuracy! 🌙');
     </script>
     
     <div class="container" style="margin-top: 20px; text-align: center;">
