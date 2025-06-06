@@ -347,7 +347,7 @@
     <div class="container">
         <div class="header">
             <h1 class="main-title">🌙 Eid Blessing Collector 🌟</h1>
-            <p class="subtitle">Collect blessings before they disappear! Keep your success rate above 65%!</p>
+            <p class="subtitle">Collect blessings before they disappear! Keep your success rate above 50%!</p>
         </div>
 
         <div class="game-area">
@@ -379,7 +379,7 @@
             </div>
 
             <div class="message-display" id="messageDisplay">
-                Get ready! Level 1 starting... Collect blessings and keep above 65% success rate!
+                Get ready! Level 1 starting... Collect blessings and keep above 50% success rate!
             </div>
 
             <div class="moon-collector" id="moonCollector">
@@ -420,7 +420,7 @@
             itemSpeed: 2500,
             levelTarget: 7, // Increased from 5
             levelCollected: 0,
-            successThreshold: 65 // Increased from 50%
+            successThreshold: 50 // Changed back to 50%
         };
 
         const levelNames = [
@@ -765,7 +765,7 @@
                 itemSpeed: 2500,
                 levelTarget: 7,
                 levelCollected: 0,
-                successThreshold: 65
+                successThreshold: 50
             };
             
             // Clear intervals
@@ -785,7 +785,7 @@
             document.getElementById('gameOverPopup').classList.remove('show');
             
             updateDisplay();
-            showMessage('Game Reset! Collect 7 blessings per level, maintain 65%+ success rate! 🎮');
+            showMessage('Game Reset! Collect 7 blessings per level, maintain 50%+ success rate! 🎮');
         }
 
         function closeGameOver() {
@@ -796,7 +796,7 @@
         // Initialize the game
         createStars();
         updateDisplay();
-        showMessage('Welcome to Eid Blessing Collector! Collect 7 blessings per level while keeping 65%+ accuracy! 🌙');
+        showMessage('Welcome to Eid Blessing Collector! Collect 7 blessings per level while keeping 50%+ accuracy! 🌙');
     </script>
     
     <div class="container" style="margin-top: 20px; text-align: center;">
