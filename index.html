@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eid Mubarak - Blessing Collector Challenge</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 2s infinite alternate;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 20px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .main-title {
+            font-family: 'Amiri', serif;
+            font-size: 3rem;
+            color: #fff;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 2px 2px 10px rgba(255,255,255,0.3); }
+            100% { text-shadow: 2px 2px 20px rgba(255,255,255,0.8); }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #f0f8ff;
+            margin-bottom: 15px;
+        }
+
+        .game-area {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .game-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 15px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        .level-info {
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ecdc4, #45b7d1);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .moon-collector {
+            position: relative;
+            height: 400px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            margin: 25px 0;
+            overflow: hidden;
+            background: rgba(0, 0, 50, 0.2);
+        }
+
+        .blessing-item {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .blessing-item:hover {
+            transform: scale(1.1);
+        }
+
+        .crescent-moon {
+            width: 35px;
+            height: 35px;
+            background: #ffd700;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+        }
+
+        .crescent-moon::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 7px;
+            width: 22px;
+            height: 22px;
+            background: rgba(0, 0, 50, 0.4);
+            border-radius: 50%;
+        }
+
+        .lantern {
+            width: 40px;
+            height: 50px;
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            border-radius: 20px 20px 10px 10px;
+        }
+
+        .lantern::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 10px;
+            background: #333;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .star-blessing {
+            width: 30px;
+            height: 30px;
+            background: #f093fb;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            box-shadow: 0 0 12px rgba(240, 147, 251, 0.7);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 25px 0;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message-display {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .fireworks {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        .firework {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            animation: firework 1s ease-out forwards;
+        }
+
+        @keyframes firework {
+            0% { 
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% { 
+                transform: scale(15);
+                opacity: 0;
+            }
+        }
+
+        .game-over-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            text-align: center;
+            z-index: 100;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .game-over-popup.show {
+            animation: popupShow 0.5s ease-out forwards;
+        }
+
+        @keyframes popupShow {
+            0% { transform: translate(-50%, -50%) scale(0); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .game-over-title {
+            font-family: 'Amiri', serif;
+            font-size: 2.5rem;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+        }
+
+        .game-over-message {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .final-stats {
+            background: rgba(240, 147, 251, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        @keyframes fadeInDown {
+            0% { opacity: 0; transform: translateY(-30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .main-title { font-size: 2.2rem; }
+            .subtitle { font-size: 1rem; }
+            .game-stats { grid-template-columns: repeat(2, 1fr); }
+            .moon-collector { height: 300px; }
+            .buttons { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="fireworks" id="fireworks"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1 class="main-title">🌙 Eid Blessing Collector 🌟</h1>
+            <p class="subtitle">Collect blessings before they disappear! Keep your success rate above 50%!</p>
+        </div>
+
+        <div class="game-area">
+            <div class="level-info">
+                <div>Level <span id="currentLevel">1</span> - <span id="levelName">Peaceful Evening</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="levelProgressBar" style="width: 0%"></div>
+                </div>
+                <div style="font-size: 0.9rem; margin-top: 5px;">Time: <span id="timeRemaining">45</span>s | Speed: <span id="gameSpeed">Peaceful</span></div>
+            </div>
+
+            <div class="game-stats">
+                <div class="stat-item">
+                    <div>🌙 Collected</div>
+                    <div class="stat-value" id="collected">0</div>
+                </div>
+                <div class="stat-item">
+                    <div>📊 Spawned</div>
+                    <div class="stat-value" id="spawned">0</div>
+                </div>
+                <div class="stat-item">
+                    <div>✨ Success Rate</div>
+                    <div class="stat-value" id="successRate">0%</div>
+                </div>
+                <div class="stat-item">
+                    <div>🎯 Level Progress</div>
+                    <div class="stat-value" id="levelProgress">0/5</div>
+                </div>
+            </div>
+
+            <div class="message-display" id="messageDisplay">
+                Get ready! Level 1 starting... Collect blessings and keep above 50% success rate!
+            </div>
+
+            <div class="moon-collector" id="moonCollector">
+                <!-- Blessing items will be spawned here -->
+            </div>
+
+            <div class="buttons">
+                <button class="btn" id="startBtn" onclick="startGame()">🎮 Start Game</button>
+                <button class="btn" id="pauseBtn" onclick="togglePause()" disabled>⏸️ Pause</button>
+                <button class="btn" onclick="restartGame()">🔄 Restart</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-over-popup" id="gameOverPopup">
+        <div class="game-over-title">Game Over!</div>
+        <div class="game-over-message" id="gameOverMessage"></div>
+        <div class="final-stats" id="finalStats"></div>
+        <button class="btn" onclick="closeGameOver()">Play Again! 🎮</button>
+    </div>
+
+    <script>
+        let gameState = {
+            level: 1,
+            collected: 0,
+            spawned: 0,
+            missed: 0,
+            streak: 0,
+            timeRemaining: 45,
+            isPlaying: false,
+            isPaused: false,
+            isGameOver: false,
+            spawnInterval: null,
+            gameTimer: null,
+            levelTimer: null,
+            spawnRate: 1200,
+            itemLifetime: 4000,
+            itemSpeed: 4000,
+            levelTarget: 5,
+            levelCollected: 0
+        };
+
+        const levelNames = [
+            "Peaceful Evening", "Gentle Breeze", "Rising Stars", "Dancing Lights", 
+            "Swift Winds", "Meteor Shower", "Lightning Speed", "Cosmic Storm",
+            "Time Warp", "Ultimate Challenge"
+        ];
+
+        const gameOverMessages = [
+            "Your blessing collection journey ends here! 🌙\nMay your efforts be rewarded in this world and the next.",
+            "Alhamdulillahi rabbil alameen! Well played! 🤲\nEvery blessing you collected counts in Allah's sight.",
+            "Masha'Allah! You showed great dedication! ✨\nRemember, persistence in good deeds is beloved to Allah.",
+            "Subhan'Allah! What a beautiful effort! 🌟\nYour journey of collecting blessings was truly admirable.",
+            "Barakallahu feeki! Excellent attempt! 🎊\nMay your real-life blessings multiply like the stars above.",
+            "La hawla wa la quwwata illa billah! 🌸\nSometimes we pause to reflect and appreciate Allah's countless gifts."
+        ];
+
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 80; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = star.style.height = Math.random() * 3 + 1 + 'px';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        function updateDisplay() {
+            document.getElementById('currentLevel').textContent = gameState.level;
+            document.getElementById('levelName').textContent = levelNames[Math.min(gameState.level - 1, levelNames.length - 1)];
+            document.getElementById('collected').textContent = gameState.collected;
+            document.getElementById('spawned').textContent = gameState.spawned;
+            document.getElementById('levelProgress').textContent = gameState.levelCollected + '/' + gameState.levelTarget;
+            document.getElementById('timeRemaining').textContent = gameState.timeRemaining;
+            
+            const successRate = gameState.spawned > 0 ? Math.round((gameState.collected / gameState.spawned) * 100) : 0;
+            document.getElementById('successRate').textContent = successRate + '%';
+            
+            const levelProgressPercent = (gameState.levelCollected / gameState.levelTarget) * 100;
+            document.getElementById('levelProgressBar').style.width = levelProgressPercent + '%';
+            
+            const speed = gameState.spawnRate > 1000 ? 'Peaceful' : 
+                         gameState.spawnRate > 800 ? 'Gentle' : 
+                         gameState.spawnRate > 600 ? 'Normal' :
+                         gameState.spawnRate > 400 ? 'Fast' : 'Swift';
+            document.getElementById('gameSpeed').textContent = speed;
+        }
+
+        function showMessage(message) {
+            document.getElementById('messageDisplay').textContent = message;
+        }
+
+        function spawnBlessingItem() {
+            if (!gameState.isPlaying || gameState.isPaused || gameState.isGameOver) return;
+            
+            const collector = document.getElementById('moonCollector');
+            const item = document.createElement('div');
+            item.className = 'blessing-item';
+            
+            // Random blessing type
+            const types = ['crescent-moon', 'lantern', 'star-blessing'];
+            const type = types[Math.floor(Math.random() * types.length)];
+            item.classList.add(type);
+            
+            // Random position
+            const maxX = collector.offsetWidth - 50;
+            const maxY = collector.offsetHeight - 60;
+            item.style.left = Math.random() * maxX + 'px';
+            item.style.top = Math.random() * maxY + 'px';
+            item.style.animationDelay = Math.random() * 2 + 's';
+            
+            gameState.spawned++;
+            updateDisplay();
+            
+            item.onclick = function() {
+                if (gameState.isGameOver) return;
+                
+                gameState.collected++;
+                gameState.levelCollected++;
+                gameState.streak++;
+                
+                // Increase speed after each blessing collected
+                gameState.spawnRate = Math.max(300, gameState.spawnRate - 50);
+                gameState.itemLifetime = Math.max(2000, gameState.itemLifetime - 100);
+                
+                // Level up after collecting 5 blessings
+                if (gameState.levelCollected >= gameState.levelTarget) {
+                    levelUp();
+                    clearInterval(gameState.spawnInterval);
+                    gameState.spawnInterval = setInterval(spawnBlessingItem, gameState.spawnRate);
+                }
+                
+                updateDisplay();
+                createFirework(
+                    item.offsetLeft + collector.offsetLeft + 20, 
+                    item.offsetTop + collector.offsetTop + 20
+                );
+                
+                const messages = [
+                    `Barakallahu feeki! (${gameState.levelCollected}/5) ✨`, 
+                    `Masha'Allah! (${gameState.levelCollected}/5) 🌟`, 
+                    `Alhamdulillah! (${gameState.levelCollected}/5) 🤲`,
+                    `Excellent! (${gameState.levelCollected}/5) 🎊`, 
+                    `Keep going! (${gameState.levelCollected}/5) 💫`, 
+                    `Well done! (${gameState.levelCollected}/5) 🌙`
+                ];
+                showMessage(messages[Math.floor(Math.random() * messages.length)]);
+                item.remove();
+            };
+            
+            collector.appendChild(item);
+            
+            // Remove after lifetime expires
+            setTimeout(() => {
+                if (item.parentElement && !gameState.isGameOver) {
+                    item.remove();
+                    gameState.missed++;
+                    updateDisplay();
+                    
+                    // Check for game over after missing a blessing
+                    if (checkGameOver()) {
+                        gameOver();
+                    }
+                }
+            }, gameState.itemLifetime);
+        }
+
+        function createFirework(x, y) {
+            const fireworksContainer = document.getElementById('fireworks');
+            const colors = ['#ff6b6b', '#ffd700', '#4ecdc4', '#45b7d1', '#f093fb', '#ffa500'];
+            
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'firework';
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                
+                fireworksContainer.appendChild(particle);
+                setTimeout(() => particle.remove(), 1000);
+            }
+        }
+
+        function checkGameOver() {
+            // Don't check if already game over
+            if (gameState.isGameOver) return true;
+            
+            // Game over if success rate falls below 50% (after spawning at least 10 items)
+            if (gameState.spawned >= 10) {
+                const successRate = (gameState.collected / gameState.spawned) * 100;
+                if (successRate < 50) {
+                    return true;
+                }
+            }
+            
+            // Also game over if time runs out without collecting enough blessings
+            if (gameState.timeRemaining <= 0 && gameState.levelCollected < gameState.levelTarget) {
+                return true;
+            }
+            
+            return false;
+        }
+
+        function levelUp() {
+            gameState.level++;
+            gameState.levelCollected = 0; // Reset level progress
+            gameState.timeRemaining = 45; // Reset timer for new level
+            
+            // Additional speed boost when leveling up
+            gameState.spawnRate = Math.max(300, gameState.spawnRate - 100);
+            gameState.itemLifetime = Math.max(2000, gameState.itemLifetime - 200);
+            
+            showMessage(`Level ${gameState.level} - ${levelNames[Math.min(gameState.level - 1, levelNames.length - 1)]}! Collect 5 more blessings! 🚀`);
+            
+            // Celebration fireworks
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    createFirework(
+                        Math.random() * window.innerWidth,
+                        Math.random() * window.innerHeight * 0.7
+                    );
+                }, i * 100);
+            }
+        }
+
+        function gameOver() {
+            if (gameState.isGameOver) return; // Prevent multiple game over calls
+            
+            gameState.isGameOver = true;
+            gameState.isPlaying = false;
+            
+            clearInterval(gameState.spawnInterval);
+            clearInterval(gameState.gameTimer);
+            clearInterval(gameState.levelTimer);
+            
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('pauseBtn').disabled = true;
+            
+            // Show game over popup
+            const popup = document.getElementById('gameOverPopup');
+            const message = document.getElementById('gameOverMessage');
+            const stats = document.getElementById('finalStats');
+            
+            const randomMessage = gameOverMessages[Math.floor(Math.random() * gameOverMessages.length)];
+            message.innerHTML = randomMessage.replace(/\n/g, '<br>');
+            
+            const finalSuccessRate = gameState.spawned > 0 ? Math.round((gameState.collected / gameState.spawned) * 100) : 0;
+            
+            stats.innerHTML = `
+                <h3>Final Statistics</h3>
+                <p><strong>Level Reached:</strong> ${gameState.level}</p>
+                <p><strong>Total Blessings Collected:</strong> ${gameState.collected}</p>
+                <p><strong>Level Progress:</strong> ${gameState.levelCollected}/${gameState.levelTarget}</p>
+                <p><strong>Total Spawned:</strong> ${gameState.spawned}</p>
+                <p><strong>Final Success Rate:</strong> ${finalSuccessRate}%</p>
+            `;
+            
+            // Clear remaining items with a slight delay
+            setTimeout(() => {
+                document.getElementById('moonCollector').innerHTML = '';
+            }, 500);
+            
+            popup.classList.add('show');
+            showMessage(`Game Over! Success rate dropped below 50% (${finalSuccessRate}%)`);
+        }
+
+        function startGame() {
+            if (gameState.isPlaying) return;
+            
+            gameState.isPlaying = true;
+            gameState.isPaused = false;
+            gameState.isGameOver = false;
+            gameState.timeRemaining = 45;
+            
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('pauseBtn').disabled = false;
+            
+            showMessage("Game started! Collect those blessings! 🌙✨");
+            
+            // Spawn items
+            gameState.spawnInterval = setInterval(spawnBlessingItem, gameState.spawnRate);
+            
+            // Game timer
+            gameState.gameTimer = setInterval(() => {
+                if (gameState.isPaused || gameState.isGameOver) return;
+                
+                gameState.timeRemaining--;
+                updateDisplay();
+                
+                if (gameState.timeRemaining <= 0) {
+                    if (gameState.levelCollected < gameState.levelTarget) {
+                        // Failed to collect enough blessings in time
+                        gameOver();
+                        return;
+                    } else {
+                        // This shouldn't happen as level up resets timer
+                        gameState.timeRemaining = 45;
+                    }
+                }
+                
+                // Check game over condition every second
+                if (checkGameOver()) {
+                    gameOver();
+                }
+            }, 1000);
+            
+            updateDisplay();
+        }
+
+        function togglePause() {
+            if (gameState.isGameOver) return;
+            
+            gameState.isPaused = !gameState.isPaused;
+            const btn = document.getElementById('pauseBtn');
+            
+            if (gameState.isPaused) {
+                btn.textContent = '▶️ Resume';
+                showMessage('Game Paused - Click Resume to continue');
+            } else {
+                btn.textContent = '⏸️ Pause';
+                showMessage('Game Resumed! Keep collecting! 🌟');
+            }
+        }
+
+        function restartGame() {
+            // Reset game state
+            gameState = {
+                level: 1,
+                collected: 0,
+                spawned: 0,
+                missed: 0,
+                streak: 0,
+                timeRemaining: 45,
+                isPlaying: false,
+                isPaused: false,
+                isGameOver: false,
+                spawnInterval: null,
+                gameTimer: null,
+                levelTimer: null,
+                spawnRate: 1200,
+                itemLifetime: 4000,
+                itemSpeed: 4000,
+                levelTarget: 5,
+                levelCollected: 0
+            };
+            
+            // Clear intervals
+            clearInterval(gameState.spawnInterval);
+            clearInterval(gameState.gameTimer);
+            clearInterval(gameState.levelTimer);
+            
+            // Clear game area
+            document.getElementById('moonCollector').innerHTML = '';
+            
+            // Reset UI
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('pauseBtn').disabled = true;
+            document.getElementById('pauseBtn').textContent = '⏸️ Pause';
+            
+            // Hide game over popup if it's showing
+            document.getElementById('gameOverPopup').classList.remove('show');
+            
+            updateDisplay();
+            showMessage('Game Reset! Collect 5 blessings per level, maintain 50%+ success rate! 🎮');
+        }
+
+        function closeGameOver() {
+            document.getElementById('gameOverPopup').classList.remove('show');
+            restartGame();
+        }
+
+        // Initialize the game
+        createStars();
+        updateDisplay();
+        showMessage('Welcome to Eid Blessing Collector! Collect 5 blessings per level while keeping 50%+ accuracy! 🌙');
+    </script>
+    
+    <div class="container" style="margin-top: 20px; text-align: center;">
+        <div style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 15px; padding: 15px; margin: 20px auto; max-width: 400px; border: 1px solid rgba(255, 255, 255, 0.2);">
+            <p style="color: #f0f8ff; font-size: 0.9rem; margin: 0;">
+                🎮 Developed by <strong>Husain Attarwala</strong> 🌙
+            </p>
+        </div>
+    </div>
+</body>
+</html>
