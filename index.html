@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Eid Mubarak - Blessing Collector Challenge</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap');
@@ -19,6 +22,11 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
+            perspective: 1000px;
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .stars {
@@ -50,6 +58,7 @@
             margin: 0 auto;
             padding: 20px;
             text-align: center;
+            transform-style: preserve-3d;
         }
 
         .header {
@@ -85,6 +94,12 @@
             margin: 20px 0;
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transform: rotateX(2deg);
+            transition: transform 0.3s ease;
+        }
+
+        .game-area:hover {
+            transform: rotateX(0deg) scale(1.02);
         }
 
         .game-stats {
@@ -100,6 +115,13 @@
             border-radius: 15px;
             color: #fff;
             font-weight: 600;
+            transform: translateZ(20px);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateZ(30px) scale(1.05);
+            background: rgba(255, 255, 255, 0.3);
         }
 
         .stat-value {
@@ -115,6 +137,8 @@
             border-radius: 15px;
             margin-bottom: 20px;
             font-weight: 600;
+            transform: translateZ(10px);
+            box-shadow: 0 5px 20px rgba(255, 107, 107, 0.4);
         }
 
         .progress-bar {
@@ -131,6 +155,7 @@
             background: linear-gradient(90deg, #4ecdc4, #45b7d1);
             border-radius: 10px;
             transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
         }
 
         .moon-collector {
@@ -141,6 +166,18 @@
             margin: 25px 0;
             overflow: hidden;
             background: rgba(0, 0, 50, 0.2);
+            transform: translateZ(0);
+            transition: border-color 0.3s ease;
+        }
+
+        .moon-collector.active {
+            border-color: rgba(255, 255, 255, 0.6);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(255, 255, 255, 0.4); }
         }
 
         .blessing-item {
@@ -148,36 +185,76 @@
             cursor: pointer;
             transition: all 0.2s ease;
             animation: float 3s ease-in-out infinite;
+            transform-style: preserve-3d;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .blessing-item:active {
+            transform: scale(1.3) rotateY(180deg);
+            filter: brightness(1.5);
         }
 
         .blessing-item:hover {
-            transform: scale(1.1);
+            transform: scale(1.2) rotateY(180deg);
+            filter: brightness(1.3);
+        }
+
+        .blessing-item.collecting {
+            animation: collectAnimation 0.5s ease-out forwards;
+        }
+
+        @keyframes collectAnimation {
+            0% { 
+                transform: scale(1) rotateY(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5) rotateY(180deg) translateZ(50px);
+            }
+            100% { 
+                transform: scale(0) rotateY(360deg) translateZ(100px);
+                opacity: 0;
+            }
         }
 
         .crescent-moon {
-            width: 35px;
-            height: 35px;
+            width: 45px;
+            height: 45px;
             background: #ffd700;
             border-radius: 50%;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.6), 0 0 30px rgba(255, 215, 0, 0.3);
+            animation: float 3s ease-in-out infinite, rotate3d 8s linear infinite;
+        }
+
+        @keyframes rotate3d {
+            0% { transform: rotateY(0deg) rotateZ(0deg); }
+            100% { transform: rotateY(360deg) rotateZ(360deg); }
         }
 
         .crescent-moon::before {
             content: '';
             position: absolute;
-            top: 4px;
-            left: 7px;
-            width: 22px;
-            height: 22px;
+            top: 5px;
+            left: 9px;
+            width: 28px;
+            height: 28px;
             background: rgba(0, 0, 50, 0.4);
             border-radius: 50%;
         }
 
         .lantern {
-            width: 40px;
-            height: 50px;
+            width: 50px;
+            height: 60px;
             background: linear-gradient(45deg, #ff6b6b, #ffa500);
-            border-radius: 20px 20px 10px 10px;
+            border-radius: 25px 25px 12px 12px;
+            box-shadow: 0 0 20px rgba(255, 140, 0, 0.6), inset 0 0 10px rgba(255, 255, 0, 0.3);
+            animation: float 3s ease-in-out infinite, swing 4s ease-in-out infinite;
+        }
+
+        @keyframes swing {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
         }
 
         .lantern::before {
@@ -193,11 +270,17 @@
         }
 
         .star-blessing {
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             background: #f093fb;
             clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            box-shadow: 0 0 12px rgba(240, 147, 251, 0.7);
+            box-shadow: 0 0 12px rgba(240, 147, 251, 0.7), 0 0 25px rgba(240, 147, 251, 0.4);
+            animation: float 3s ease-in-out infinite, sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.5); }
         }
 
         @keyframes float {
@@ -216,19 +299,26 @@
         .btn {
             background: linear-gradient(45deg, #ff6b6b, #ffa500);
             border: none;
-            padding: 12px 25px;
+            padding: 14px 28px;
             border-radius: 25px;
             color: white;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transform: translateZ(0);
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
+            transform: translateY(-2px) translateZ(10px);
             box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0) translateZ(5px);
         }
 
         .btn:disabled {
@@ -250,6 +340,18 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transform: translateZ(5px);
+            transition: all 0.3s ease;
+        }
+
+        .message-display.success {
+            animation: successPulse 0.5s ease;
+        }
+
+        @keyframes successPulse {
+            0% { transform: translateZ(5px) scale(1); }
+            50% { transform: translateZ(15px) scale(1.05); }
+            100% { transform: translateZ(5px) scale(1); }
         }
 
         .fireworks {
@@ -281,11 +383,31 @@
             }
         }
 
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particle 1s ease-out forwards;
+        }
+
+        @keyframes particle {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+
         .game-over-popup {
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0);
+            transform: translate(-50%, -50%) scale(0) rotateX(90deg);
             background: rgba(255, 255, 255, 0.95);
             padding: 40px;
             border-radius: 20px;
@@ -294,15 +416,17 @@
             z-index: 100;
             max-width: 500px;
             width: 90%;
+            transform-style: preserve-3d;
         }
 
         .game-over-popup.show {
-            animation: popupShow 0.5s ease-out forwards;
+            animation: popupShow3D 0.8s ease-out forwards;
         }
 
-        @keyframes popupShow {
-            0% { transform: translate(-50%, -50%) scale(0); }
-            100% { transform: translate(-50%, -50%) scale(1); }
+        @keyframes popupShow3D {
+            0% { transform: translate(-50%, -50%) scale(0) rotateX(90deg); }
+            50% { transform: translate(-50%, -50%) scale(1.1) rotateX(0deg); }
+            100% { transform: translate(-50%, -50%) scale(1) rotateX(0deg); }
         }
 
         .game-over-title {
@@ -326,23 +450,131 @@
             margin: 20px 0;
         }
 
+        .combo-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            pointer-events: none;
+            opacity: 0;
+            z-index: 50;
+        }
+
+        .combo-indicator.show {
+            animation: comboShow 1s ease-out;
+        }
+
+        @keyframes comboShow {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5) rotateZ(0deg);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.5) rotateZ(180deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(2) rotateZ(360deg);
+            }
+        }
+
+        .sound-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .sound-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
         @keyframes fadeInDown {
             0% { opacity: 0; transform: translateY(-30px); }
             100% { opacity: 1; transform: translateY(0); }
         }
 
         @media (max-width: 768px) {
-            .main-title { font-size: 2.2rem; }
-            .subtitle { font-size: 1rem; }
-            .game-stats { grid-template-columns: repeat(2, 1fr); }
-            .moon-collector { height: 300px; }
-            .buttons { flex-direction: column; align-items: center; }
+            .main-title { font-size: 2rem; }
+            .subtitle { font-size: 0.95rem; }
+            .game-stats { 
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 10px;
+            }
+            .stat-item {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+            .stat-value {
+                font-size: 1.3rem;
+            }
+            .moon-collector { 
+                height: 350px;
+                margin: 15px 0;
+            }
+            .buttons { 
+                flex-direction: row;
+                gap: 10px;
+            }
+            .btn {
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+            .game-area {
+                padding: 15px;
+            }
+            .message-display {
+                font-size: 1rem;
+                padding: 12px;
+            }
+            .container {
+                padding: 10px;
+            }
+        }
+        
+        @media (max-height: 700px) {
+            .moon-collector {
+                height: 280px;
+            }
+            .main-title {
+                font-size: 1.8rem;
+                margin-bottom: 5px;
+            }
+            .game-stats {
+                margin-bottom: 15px;
+            }
+        }
+        
+        /* Prevent touch scrolling during game */
+        body.game-active {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
 <body>
     <div class="stars" id="stars"></div>
     <div class="fireworks" id="fireworks"></div>
+    <div class="combo-indicator" id="comboIndicator"></div>
     
     <div class="container">
         <div class="header">
@@ -356,7 +588,7 @@
                 <div class="progress-bar">
                     <div class="progress-fill" id="levelProgressBar" style="width: 0%"></div>
                 </div>
-                <div style="font-size: 0.9rem; margin-top: 5px;">Time: <span id="timeRemaining">40</span>s | Speed: <span id="gameSpeed">Normal</span></div>
+                <div style="font-size: 0.9rem; margin-top: 5px;">Time: <span id="timeRemaining">45</span>s | Speed: <span id="gameSpeed">Peaceful</span></div>
             </div>
 
             <div class="game-stats">
@@ -401,26 +633,109 @@
         <button class="btn" onclick="closeGameOver()">Play Again! 🎮</button>
     </div>
 
+    <div class="sound-toggle" id="soundToggle" onclick="toggleSound()">
+        <span id="soundIcon">🔊</span>
+    </div>
+
     <script>
+        // Sound System
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioContext;
+        let soundEnabled = true;
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new AudioContext();
+            }
+        }
+
+        function playSound(type) {
+            if (!soundEnabled || !audioContext) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            const now = audioContext.currentTime;
+            
+            switch(type) {
+                case 'collect':
+                    oscillator.frequency.setValueAtTime(523.25, now); // C5
+                    oscillator.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                    oscillator.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                    gainNode.gain.setValueAtTime(0.3, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.3);
+                    break;
+                case 'levelUp':
+                    oscillator.frequency.setValueAtTime(440, now); // A4
+                    oscillator.frequency.setValueAtTime(554.37, now + 0.1); // C#5
+                    oscillator.frequency.setValueAtTime(659.25, now + 0.2); // E5
+                    oscillator.frequency.setValueAtTime(880, now + 0.3); // A5
+                    gainNode.gain.setValueAtTime(0.4, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.5);
+                    break;
+                case 'miss':
+                    oscillator.frequency.setValueAtTime(200, now);
+                    oscillator.frequency.setValueAtTime(150, now + 0.1);
+                    gainNode.gain.setValueAtTime(0.2, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.2);
+                    break;
+                case 'gameOver':
+                    oscillator.frequency.setValueAtTime(440, now);
+                    oscillator.frequency.setValueAtTime(349.23, now + 0.2);
+                    oscillator.frequency.setValueAtTime(261.63, now + 0.4);
+                    gainNode.gain.setValueAtTime(0.4, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.6);
+                    break;
+                case 'combo':
+                    oscillator.frequency.setValueAtTime(880, now);
+                    oscillator.frequency.setValueAtTime(1108.73, now + 0.05);
+                    oscillator.frequency.setValueAtTime(1318.51, now + 0.1);
+                    gainNode.gain.setValueAtTime(0.5, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.2);
+                    break;
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('soundIcon').textContent = soundEnabled ? '🔊' : '🔇';
+        }
+
+        // Game State
         let gameState = {
             level: 1,
             collected: 0,
             spawned: 0,
             missed: 0,
             streak: 0,
-            timeRemaining: 40, // Increased from 30
+            timeRemaining: 45,
             isPlaying: false,
             isPaused: false,
             isGameOver: false,
             spawnInterval: null,
             gameTimer: null,
             levelTimer: null,
-            spawnRate: 1000, // Slower initial spawn (was 800)
-            itemLifetime: 3500, // Longer lifetime (was 2500)
-            itemSpeed: 3500,
-            levelTarget: 5, // Reduced from 7
+            spawnRate: 1500, // Very slow start
+            itemLifetime: 5000, // Very long lifetime
+            itemSpeed: 5000,
+            levelTarget: 5,
             levelCollected: 0,
-            successThreshold: 50
+            successThreshold: 50,
+            combo: 0,
+            lastCollectTime: 0
         };
 
         const levelNames = [
@@ -440,7 +755,7 @@
 
         function createStars() {
             const starsContainer = document.getElementById('stars');
-            for (let i = 0; i < 80; i++) {
+            for (let i = 0; i < 100; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
                 star.style.left = Math.random() * 100 + '%';
@@ -449,6 +764,34 @@
                 star.style.animationDelay = Math.random() * 2 + 's';
                 starsContainer.appendChild(star);
             }
+        }
+
+        function createParticles(x, y, color) {
+            const container = document.getElementById('moonCollector');
+            for (let i = 0; i < 12; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.backgroundColor = color;
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                
+                const angle = (i / 12) * Math.PI * 2;
+                const distance = 50 + Math.random() * 50;
+                particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+                particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+                
+                container.appendChild(particle);
+                setTimeout(() => particle.remove(), 1000);
+            }
+        }
+
+        function showCombo(count) {
+            const indicator = document.getElementById('comboIndicator');
+            indicator.textContent = `${count}x COMBO!`;
+            indicator.classList.remove('show');
+            void indicator.offsetWidth; // Force reflow
+            indicator.classList.add('show');
+            playSound('combo');
         }
 
         function updateDisplay() {
@@ -465,21 +808,29 @@
             const levelProgressPercent = (gameState.levelCollected / gameState.levelTarget) * 100;
             document.getElementById('levelProgressBar').style.width = levelProgressPercent + '%';
             
-            const speed = gameState.spawnRate > 1000 ? 'Peaceful' : 
-                         gameState.spawnRate > 800 ? 'Gentle' : 
-                         gameState.spawnRate > 600 ? 'Normal' :
-                         gameState.spawnRate > 400 ? 'Fast' : 'Swift';
+            const speed = gameState.spawnRate > 1200 ? 'Peaceful' : 
+                         gameState.spawnRate > 1000 ? 'Gentle' : 
+                         gameState.spawnRate > 800 ? 'Normal' :
+                         gameState.spawnRate > 600 ? 'Fast' : 
+                         gameState.spawnRate > 400 ? 'Swift' : 'Lightning';
             document.getElementById('gameSpeed').textContent = speed;
         }
 
-        function showMessage(message) {
-            document.getElementById('messageDisplay').textContent = message;
+        function showMessage(message, isSuccess = false) {
+            const display = document.getElementById('messageDisplay');
+            display.textContent = message;
+            if (isSuccess) {
+                display.classList.add('success');
+                setTimeout(() => display.classList.remove('success'), 500);
+            }
         }
 
         function spawnBlessingItem() {
             if (!gameState.isPlaying || gameState.isPaused || gameState.isGameOver) return;
             
             const collector = document.getElementById('moonCollector');
+            collector.classList.add('active');
+            
             const item = document.createElement('div');
             item.className = 'blessing-item';
             
@@ -488,44 +839,60 @@
             const type = types[Math.floor(Math.random() * types.length)];
             item.classList.add(type);
             
-            // Random position
-            const maxX = collector.offsetWidth - 50;
-            const maxY = collector.offsetHeight - 60;
-            item.style.left = Math.random() * maxX + 'px';
-            item.style.top = Math.random() * maxY + 'px';
+            // Random position with padding for touch targets
+            const padding = 30; // Padding from edges for easier touch
+            const maxX = collector.offsetWidth - 70; // Account for larger blessing size
+            const maxY = collector.offsetHeight - 80;
+            item.style.left = padding + Math.random() * (maxX - padding * 2) + 'px';
+            item.style.top = padding + Math.random() * (maxY - padding * 2) + 'px';
             item.style.animationDelay = Math.random() * 2 + 's';
             
             gameState.spawned++;
             updateDisplay();
             
-            // Add random movement for higher levels
-            if (gameState.level > 5) { // Changed from level 3
-                const moveDirection = Math.random() < 0.5 ? 1 : -1;
-                const moveSpeed = Math.min(gameState.level * 0.3, 2); // Slower movement
-                let currentPos = parseFloat(item.style.left);
-                
-                const moveInterval = setInterval(() => {
-                    if (!item.parentElement || gameState.isGameOver) {
-                        clearInterval(moveInterval);
-                        return;
-                    }
-                    currentPos += moveDirection * moveSpeed;
-                    if (currentPos < 0) currentPos = maxX;
-                    if (currentPos > maxX) currentPos = 0;
-                    item.style.left = currentPos + 'px';
-                }, 50);
-            }
+            // Touch event handling
+            let touched = false;
             
-            item.onclick = function() {
-                if (gameState.isGameOver) return;
+            const handleTouch = function(e) {
+                if (gameState.isGameOver || touched) return;
+                
+                e.preventDefault();
+                e.stopPropagation();
+                touched = true;
+                
+                item.classList.add('collecting');
+                
+                const currentTime = Date.now();
+                if (currentTime - gameState.lastCollectTime < 1000) {
+                    gameState.combo++;
+                    if (gameState.combo > 2) {
+                        showCombo(gameState.combo);
+                    }
+                } else {
+                    gameState.combo = 1;
+                }
+                gameState.lastCollectTime = currentTime;
                 
                 gameState.collected++;
                 gameState.levelCollected++;
                 gameState.streak++;
                 
-                // Gentler speed increase
-                gameState.spawnRate = Math.max(300, gameState.spawnRate - 50);
-                gameState.itemLifetime = Math.max(1500, gameState.itemLifetime - 100);
+                // Vibrate on successful collection (if supported)
+                if (window.navigator && window.navigator.vibrate) {
+                    window.navigator.vibrate(50);
+                }
+                
+                // Gradual speed increase
+                if (gameState.level <= 3) {
+                    gameState.spawnRate = Math.max(1000, gameState.spawnRate - 30);
+                    gameState.itemLifetime = Math.max(3000, gameState.itemLifetime - 50);
+                } else if (gameState.level <= 6) {
+                    gameState.spawnRate = Math.max(600, gameState.spawnRate - 40);
+                    gameState.itemLifetime = Math.max(2000, gameState.itemLifetime - 80);
+                } else {
+                    gameState.spawnRate = Math.max(400, gameState.spawnRate - 50);
+                    gameState.itemLifetime = Math.max(1500, gameState.itemLifetime - 100);
+                }
                 
                 // Level up after collecting target blessings
                 if (gameState.levelCollected >= gameState.levelTarget) {
@@ -535,10 +902,23 @@
                 }
                 
                 updateDisplay();
+                
+                const itemRect = item.getBoundingClientRect();
+                const collectorRect = collector.getBoundingClientRect();
                 createFirework(
-                    item.offsetLeft + collector.offsetLeft + 20, 
-                    item.offsetTop + collector.offsetTop + 20
+                    itemRect.left - collectorRect.left + 25, 
+                    itemRect.top - collectorRect.top + 25
                 );
+                
+                // Create particles at blessing location
+                const colors = ['#ffd700', '#ff6b6b', '#f093fb'];
+                createParticles(
+                    parseFloat(item.style.left) + 25,
+                    parseFloat(item.style.top) + 25,
+                    colors[Math.floor(Math.random() * colors.length)]
+                );
+                
+                playSound('collect');
                 
                 const messages = [
                     `Barakallahu feeki! (${gameState.levelCollected}/${gameState.levelTarget}) ✨`, 
@@ -548,17 +928,41 @@
                     `Keep going! (${gameState.levelCollected}/${gameState.levelTarget}) 💫`, 
                     `Well done! (${gameState.levelCollected}/${gameState.levelTarget}) 🌙`
                 ];
-                showMessage(messages[Math.floor(Math.random() * messages.length)]);
-                item.remove();
+                showMessage(messages[Math.floor(Math.random() * messages.length)], true);
+                
+                setTimeout(() => item.remove(), 500);
             };
+            
+            // Add both touch and click events
+            item.addEventListener('touchstart', handleTouch, { passive: false });
+            item.addEventListener('click', handleTouch);
+            
+            // Add gentle movement for higher levels
+            if (gameState.level > 7) {
+                const moveDirection = Math.random() < 0.5 ? 1 : -1;
+                const moveSpeed = Math.min(gameState.level * 0.2, 3);
+                let currentPos = parseFloat(item.style.left);
+                
+                const moveInterval = setInterval(() => {
+                    if (!item.parentElement || gameState.isGameOver) {
+                        clearInterval(moveInterval);
+                        return;
+                    }
+                    currentPos += moveDirection * moveSpeed;
+                    if (currentPos < padding) currentPos = maxX - padding;
+                    if (currentPos > maxX - padding) currentPos = padding;
+                    item.style.left = currentPos + 'px';
+                }, 50);
+            }
             
             collector.appendChild(item);
             
             // Remove after lifetime expires
             setTimeout(() => {
-                if (item.parentElement && !gameState.isGameOver) {
+                if (item.parentElement && !gameState.isGameOver && !item.classList.contains('collecting')) {
                     item.remove();
                     gameState.missed++;
+                    playSound('miss');
                     updateDisplay();
                     
                     // Check for game over after missing a blessing
@@ -579,6 +983,7 @@
                 particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 particle.style.left = x + 'px';
                 particle.style.top = y + 'px';
+                particle.style.boxShadow = `0 0 6px ${particle.style.backgroundColor}`;
                 
                 fireworksContainer.appendChild(particle);
                 setTimeout(() => particle.remove(), 1000);
@@ -586,18 +991,17 @@
         }
 
         function checkGameOver() {
-            // Don't check if already game over
             if (gameState.isGameOver) return true;
             
-            // Game over if success rate falls below threshold (after spawning at least 8 items)
-            if (gameState.spawned >= 8) {
+            // More forgiving check - need 10 items before checking
+            if (gameState.spawned >= 10) {
                 const successRate = (gameState.collected / gameState.spawned) * 100;
                 if (successRate < gameState.successThreshold) {
                     return true;
                 }
             }
             
-            // Also game over if time runs out without collecting enough blessings
+            // Game over if time runs out without collecting enough
             if (gameState.timeRemaining <= 0 && gameState.levelCollected < gameState.levelTarget) {
                 return true;
             }
@@ -607,25 +1011,32 @@
 
         function levelUp() {
             gameState.level++;
-            gameState.levelCollected = 0; // Reset level progress
-            gameState.timeRemaining = Math.max(25, 40 - gameState.level); // More time per level
+            gameState.levelCollected = 0;
+            gameState.timeRemaining = Math.max(30, 50 - gameState.level);
             
-            // Gentler speed boost when leveling up
-            gameState.spawnRate = Math.max(300, gameState.spawnRate - 100);
-            gameState.itemLifetime = Math.max(1200, gameState.itemLifetime - 200);
+            // Gradual difficulty increase
+            if (gameState.level <= 5) {
+                gameState.spawnRate = Math.max(800, gameState.spawnRate - 100);
+                gameState.itemLifetime = Math.max(2500, gameState.itemLifetime - 200);
+            } else {
+                gameState.spawnRate = Math.max(400, gameState.spawnRate - 150);
+                gameState.itemLifetime = Math.max(1500, gameState.itemLifetime - 250);
+            }
             
-            // Increase targets for higher levels (more gradual)
-            if (gameState.level > 7) {
+            // Gradual target increase
+            if (gameState.level > 10) {
+                gameState.levelTarget = 8;
+            } else if (gameState.level > 7) {
+                gameState.levelTarget = 7;
+            } else if (gameState.level > 4) {
                 gameState.levelTarget = 6;
             }
-            if (gameState.level > 10) {
-                gameState.levelTarget = 7;
-            }
             
+            playSound('levelUp');
             showMessage(`Level ${gameState.level} - ${levelNames[Math.min(gameState.level - 1, levelNames.length - 1)]}! Collect ${gameState.levelTarget} more blessings! 🚀`);
             
             // Celebration fireworks
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 12; i++) {
                 setTimeout(() => {
                     createFirework(
                         Math.random() * window.innerWidth,
@@ -636,7 +1047,7 @@
         }
 
         function gameOver() {
-            if (gameState.isGameOver) return; // Prevent multiple game over calls
+            if (gameState.isGameOver) return;
             
             gameState.isGameOver = true;
             gameState.isPlaying = false;
@@ -645,8 +1056,12 @@
             clearInterval(gameState.gameTimer);
             clearInterval(gameState.levelTimer);
             
+            document.body.classList.remove('game-active');
+            document.getElementById('moonCollector').classList.remove('active');
             document.getElementById('startBtn').disabled = false;
             document.getElementById('pauseBtn').disabled = true;
+            
+            playSound('gameOver');
             
             // Show game over popup
             const popup = document.getElementById('gameOverPopup');
@@ -665,9 +1080,9 @@
                 <p><strong>Level Progress:</strong> ${gameState.levelCollected}/${gameState.levelTarget}</p>
                 <p><strong>Total Spawned:</strong> ${gameState.spawned}</p>
                 <p><strong>Final Success Rate:</strong> ${finalSuccessRate}%</p>
+                <p><strong>Best Combo:</strong> ${gameState.combo}x</p>
             `;
             
-            // Clear remaining items with a slight delay
             setTimeout(() => {
                 document.getElementById('moonCollector').innerHTML = '';
             }, 500);
@@ -679,28 +1094,31 @@
         function startGame() {
             if (gameState.isPlaying) return;
             
+            initAudio();
             gameState.isPlaying = true;
             gameState.isPaused = false;
             gameState.isGameOver = false;
-            gameState.timeRemaining = 40;
+            gameState.timeRemaining = 45;
             
+            document.body.classList.add('game-active');
             document.getElementById('startBtn').disabled = true;
             document.getElementById('pauseBtn').disabled = false;
+            document.getElementById('moonCollector').classList.add('active');
             
-            showMessage("Game started! Collect those blessings! 🌙✨");
+            showMessage("Game started! Tap the blessings! 🌙✨");
             
             // Spawn items
             gameState.spawnInterval = setInterval(spawnBlessingItem, gameState.spawnRate);
             
-            // Spawn multiple items at higher levels (less frequent)
-            if (gameState.level > 5) {
+            // Multiple spawns only at very high levels
+            if (gameState.level > 8) {
                 setTimeout(() => {
                     setInterval(() => {
-                        if (gameState.level > 8 && Math.random() < 0.2) { // Reduced chance
+                        if (gameState.level > 10 && Math.random() < 0.15) {
                             spawnBlessingItem();
                         }
-                    }, gameState.spawnRate * 3); // Less frequent
-                }, 2000);
+                    }, gameState.spawnRate * 3);
+                }, 3000);
             }
             
             // Game timer
@@ -712,16 +1130,13 @@
                 
                 if (gameState.timeRemaining <= 0) {
                     if (gameState.levelCollected < gameState.levelTarget) {
-                        // Failed to collect enough blessings in time
                         gameOver();
                         return;
                     } else {
-                        // This shouldn't happen as level up resets timer
-                        gameState.timeRemaining = 40;
+                        gameState.timeRemaining = 45;
                     }
                 }
                 
-                // Check game over condition every second
                 if (checkGameOver()) {
                     gameOver();
                 }
@@ -739,9 +1154,11 @@
             if (gameState.isPaused) {
                 btn.textContent = '▶️ Resume';
                 showMessage('Game Paused - Click Resume to continue');
+                document.getElementById('moonCollector').classList.remove('active');
             } else {
                 btn.textContent = '⏸️ Pause';
                 showMessage('Game Resumed! Keep collecting! 🌟');
+                document.getElementById('moonCollector').classList.add('active');
             }
         }
 
@@ -753,35 +1170,34 @@
                 spawned: 0,
                 missed: 0,
                 streak: 0,
-                timeRemaining: 40,
+                timeRemaining: 45,
                 isPlaying: false,
                 isPaused: false,
                 isGameOver: false,
                 spawnInterval: null,
                 gameTimer: null,
                 levelTimer: null,
-                spawnRate: 1000,
-                itemLifetime: 3500,
-                itemSpeed: 3500,
+                spawnRate: 1500,
+                itemLifetime: 5000,
+                itemSpeed: 5000,
                 levelTarget: 5,
                 levelCollected: 0,
-                successThreshold: 50
+                successThreshold: 50,
+                combo: 0,
+                lastCollectTime: 0
             };
             
-            // Clear intervals
             clearInterval(gameState.spawnInterval);
             clearInterval(gameState.gameTimer);
             clearInterval(gameState.levelTimer);
             
-            // Clear game area
             document.getElementById('moonCollector').innerHTML = '';
+            document.getElementById('moonCollector').classList.remove('active');
             
-            // Reset UI
             document.getElementById('startBtn').disabled = false;
             document.getElementById('pauseBtn').disabled = true;
             document.getElementById('pauseBtn').textContent = '⏸️ Pause';
             
-            // Hide game over popup if it's showing
             document.getElementById('gameOverPopup').classList.remove('show');
             
             updateDisplay();
@@ -796,7 +1212,24 @@
         // Initialize the game
         createStars();
         updateDisplay();
-        showMessage('Welcome to Eid Blessing Collector! Collect 5 blessings per level while keeping 50%+ accuracy! 🌙');
+        showMessage('Welcome! Tap the blessings to collect them! Keep 50%+ accuracy! 🌙');
+        
+        // Prevent zoom on double tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
+        
+        // Prevent scroll refresh on mobile
+        document.addEventListener('touchmove', function(e) {
+            if (document.body.classList.contains('game-active')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
     </script>
     
     <div class="container" style="margin-top: 20px; text-align: center;">
