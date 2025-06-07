@@ -3,9 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Eid Mubarak - Blessing Collector Challenge</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap');
@@ -23,10 +20,7 @@
             overflow-x: hidden;
             position: relative;
             perspective: 1000px;
-            touch-action: manipulation;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .stars {
@@ -186,13 +180,6 @@
             transition: all 0.2s ease;
             animation: float 3s ease-in-out infinite;
             transform-style: preserve-3d;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-        }
-
-        .blessing-item:active {
-            transform: scale(1.3) rotateY(180deg);
-            filter: brightness(1.5);
         }
 
         .blessing-item:hover {
@@ -219,8 +206,8 @@
         }
 
         .crescent-moon {
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
             background: #ffd700;
             border-radius: 50%;
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.6), 0 0 30px rgba(255, 215, 0, 0.3);
@@ -236,18 +223,18 @@
             content: '';
             position: absolute;
             top: 5px;
-            left: 9px;
-            width: 28px;
-            height: 28px;
+            left: 8px;
+            width: 25px;
+            height: 25px;
             background: rgba(0, 0, 50, 0.4);
             border-radius: 50%;
         }
 
         .lantern {
-            width: 50px;
-            height: 60px;
+            width: 45px;
+            height: 55px;
             background: linear-gradient(45deg, #ff6b6b, #ffa500);
-            border-radius: 25px 25px 12px 12px;
+            border-radius: 22px 22px 11px 11px;
             box-shadow: 0 0 20px rgba(255, 140, 0, 0.6), inset 0 0 10px rgba(255, 255, 0, 0.3);
             animation: float 3s ease-in-out infinite, swing 4s ease-in-out infinite;
         }
@@ -270,8 +257,8 @@
         }
 
         .star-blessing {
-            width: 40px;
-            height: 40px;
+            width: 35px;
+            height: 35px;
             background: #f093fb;
             clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
             box-shadow: 0 0 12px rgba(240, 147, 251, 0.7), 0 0 25px rgba(240, 147, 251, 0.4);
@@ -299,17 +286,15 @@
         .btn {
             background: linear-gradient(45deg, #ff6b6b, #ffa500);
             border: none;
-            padding: 14px 28px;
+            padding: 12px 25px;
             border-radius: 25px;
             color: white;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             transform: translateZ(0);
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
         }
 
         .btn:hover {
@@ -512,62 +497,15 @@
         }
 
         @media (max-width: 768px) {
-            .main-title { font-size: 2rem; }
-            .subtitle { font-size: 0.95rem; }
-            .game-stats { 
-                grid-template-columns: repeat(2, 1fr); 
-                gap: 10px;
+            .main-title { font-size: 2.2rem; }
+            .subtitle { font-size: 1rem; }
+            .game-stats { grid-template-columns: repeat(2, 1fr); }
+            .moon-collector { height: 350px; }
+            .buttons { flex-direction: row; }
+            .btn { 
+                padding: 14px 24px;
+                font-size: 1.1rem;
             }
-            .stat-item {
-                padding: 12px;
-                font-size: 0.9rem;
-            }
-            .stat-value {
-                font-size: 1.3rem;
-            }
-            .moon-collector { 
-                height: 350px;
-                margin: 15px 0;
-            }
-            .buttons { 
-                flex-direction: row;
-                gap: 10px;
-            }
-            .btn {
-                padding: 12px 20px;
-                font-size: 1rem;
-            }
-            .game-area {
-                padding: 15px;
-            }
-            .message-display {
-                font-size: 1rem;
-                padding: 12px;
-            }
-            .container {
-                padding: 10px;
-            }
-        }
-        
-        @media (max-height: 700px) {
-            .moon-collector {
-                height: 280px;
-            }
-            .main-title {
-                font-size: 1.8rem;
-                margin-bottom: 5px;
-            }
-            .game-stats {
-                margin-bottom: 15px;
-            }
-        }
-        
-        /* Prevent touch scrolling during game */
-        body.game-active {
-            overflow: hidden;
-            position: fixed;
-            width: 100%;
-            height: 100%;
         }
     </style>
 </head>
@@ -825,6 +763,87 @@
             }
         }
 
+        function handleBlessingClick(item, e) {
+            if (gameState.isGameOver || item.classList.contains('collecting')) return;
+            
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            item.classList.add('collecting');
+            
+            const currentTime = Date.now();
+            if (currentTime - gameState.lastCollectTime < 1000) {
+                gameState.combo++;
+                if (gameState.combo > 2) {
+                    showCombo(gameState.combo);
+                }
+            } else {
+                gameState.combo = 1;
+            }
+            gameState.lastCollectTime = currentTime;
+            
+            gameState.collected++;
+            gameState.levelCollected++;
+            gameState.streak++;
+            
+            // Gradual speed increase
+            if (gameState.level <= 3) {
+                gameState.spawnRate = Math.max(1000, gameState.spawnRate - 30);
+                gameState.itemLifetime = Math.max(3000, gameState.itemLifetime - 50);
+            } else if (gameState.level <= 6) {
+                gameState.spawnRate = Math.max(600, gameState.spawnRate - 40);
+                gameState.itemLifetime = Math.max(2000, gameState.itemLifetime - 80);
+            } else {
+                gameState.spawnRate = Math.max(400, gameState.spawnRate - 50);
+                gameState.itemLifetime = Math.max(1500, gameState.itemLifetime - 100);
+            }
+            
+            // Level up after collecting target blessings
+            if (gameState.levelCollected >= gameState.levelTarget) {
+                levelUp();
+                clearInterval(gameState.spawnInterval);
+                gameState.spawnInterval = setInterval(spawnBlessingItem, gameState.spawnRate);
+            }
+            
+            updateDisplay();
+            
+            const itemRect = item.getBoundingClientRect();
+            const collectorRect = document.getElementById('moonCollector').getBoundingClientRect();
+            createFirework(
+                itemRect.left - collectorRect.left + 20, 
+                itemRect.top - collectorRect.top + 20
+            );
+            
+            // Create particles at blessing location
+            const colors = ['#ffd700', '#ff6b6b', '#f093fb'];
+            createParticles(
+                parseFloat(item.style.left) + 20,
+                parseFloat(item.style.top) + 20,
+                colors[Math.floor(Math.random() * colors.length)]
+            );
+            
+            playSound('collect');
+            
+            // Vibrate on mobile if supported
+            if (window.navigator && window.navigator.vibrate) {
+                window.navigator.vibrate(50);
+            }
+            
+            const messages = [
+                `Barakallahu feeki! (${gameState.levelCollected}/${gameState.levelTarget}) ✨`, 
+                `Masha'Allah! (${gameState.levelCollected}/${gameState.levelTarget}) 🌟`, 
+                `Alhamdulillah! (${gameState.levelCollected}/${gameState.levelTarget}) 🤲`,
+                `Excellent! (${gameState.levelCollected}/${gameState.levelTarget}) 🎊`, 
+                `Keep going! (${gameState.levelCollected}/${gameState.levelTarget}) 💫`, 
+                `Well done! (${gameState.levelCollected}/${gameState.levelTarget}) 🌙`
+            ];
+            showMessage(messages[Math.floor(Math.random() * messages.length)], true);
+            
+            setTimeout(() => item.remove(), 500);
+        }
+
         function spawnBlessingItem() {
             if (!gameState.isPlaying || gameState.isPaused || gameState.isGameOver) return;
             
@@ -839,103 +858,15 @@
             const type = types[Math.floor(Math.random() * types.length)];
             item.classList.add(type);
             
-            // Random position with padding for touch targets
-            const padding = 30; // Padding from edges for easier touch
-            const maxX = collector.offsetWidth - 70; // Account for larger blessing size
-            const maxY = collector.offsetHeight - 80;
-            item.style.left = padding + Math.random() * (maxX - padding * 2) + 'px';
-            item.style.top = padding + Math.random() * (maxY - padding * 2) + 'px';
+            // Random position
+            const maxX = collector.offsetWidth - 50;
+            const maxY = collector.offsetHeight - 60;
+            item.style.left = Math.random() * maxX + 'px';
+            item.style.top = Math.random() * maxY + 'px';
             item.style.animationDelay = Math.random() * 2 + 's';
             
             gameState.spawned++;
             updateDisplay();
-            
-            // Touch event handling
-            let touched = false;
-            
-            const handleTouch = function(e) {
-                if (gameState.isGameOver || touched) return;
-                
-                e.preventDefault();
-                e.stopPropagation();
-                touched = true;
-                
-                item.classList.add('collecting');
-                
-                const currentTime = Date.now();
-                if (currentTime - gameState.lastCollectTime < 1000) {
-                    gameState.combo++;
-                    if (gameState.combo > 2) {
-                        showCombo(gameState.combo);
-                    }
-                } else {
-                    gameState.combo = 1;
-                }
-                gameState.lastCollectTime = currentTime;
-                
-                gameState.collected++;
-                gameState.levelCollected++;
-                gameState.streak++;
-                
-                // Vibrate on successful collection (if supported)
-                if (window.navigator && window.navigator.vibrate) {
-                    window.navigator.vibrate(50);
-                }
-                
-                // Gradual speed increase
-                if (gameState.level <= 3) {
-                    gameState.spawnRate = Math.max(1000, gameState.spawnRate - 30);
-                    gameState.itemLifetime = Math.max(3000, gameState.itemLifetime - 50);
-                } else if (gameState.level <= 6) {
-                    gameState.spawnRate = Math.max(600, gameState.spawnRate - 40);
-                    gameState.itemLifetime = Math.max(2000, gameState.itemLifetime - 80);
-                } else {
-                    gameState.spawnRate = Math.max(400, gameState.spawnRate - 50);
-                    gameState.itemLifetime = Math.max(1500, gameState.itemLifetime - 100);
-                }
-                
-                // Level up after collecting target blessings
-                if (gameState.levelCollected >= gameState.levelTarget) {
-                    levelUp();
-                    clearInterval(gameState.spawnInterval);
-                    gameState.spawnInterval = setInterval(spawnBlessingItem, gameState.spawnRate);
-                }
-                
-                updateDisplay();
-                
-                const itemRect = item.getBoundingClientRect();
-                const collectorRect = collector.getBoundingClientRect();
-                createFirework(
-                    itemRect.left - collectorRect.left + 25, 
-                    itemRect.top - collectorRect.top + 25
-                );
-                
-                // Create particles at blessing location
-                const colors = ['#ffd700', '#ff6b6b', '#f093fb'];
-                createParticles(
-                    parseFloat(item.style.left) + 25,
-                    parseFloat(item.style.top) + 25,
-                    colors[Math.floor(Math.random() * colors.length)]
-                );
-                
-                playSound('collect');
-                
-                const messages = [
-                    `Barakallahu feeki! (${gameState.levelCollected}/${gameState.levelTarget}) ✨`, 
-                    `Masha'Allah! (${gameState.levelCollected}/${gameState.levelTarget}) 🌟`, 
-                    `Alhamdulillah! (${gameState.levelCollected}/${gameState.levelTarget}) 🤲`,
-                    `Excellent! (${gameState.levelCollected}/${gameState.levelTarget}) 🎊`, 
-                    `Keep going! (${gameState.levelCollected}/${gameState.levelTarget}) 💫`, 
-                    `Well done! (${gameState.levelCollected}/${gameState.levelTarget}) 🌙`
-                ];
-                showMessage(messages[Math.floor(Math.random() * messages.length)], true);
-                
-                setTimeout(() => item.remove(), 500);
-            };
-            
-            // Add both touch and click events
-            item.addEventListener('touchstart', handleTouch, { passive: false });
-            item.addEventListener('click', handleTouch);
             
             // Add gentle movement for higher levels
             if (gameState.level > 7) {
@@ -949,11 +880,15 @@
                         return;
                     }
                     currentPos += moveDirection * moveSpeed;
-                    if (currentPos < padding) currentPos = maxX - padding;
-                    if (currentPos > maxX - padding) currentPos = padding;
+                    if (currentPos < 0) currentPos = maxX;
+                    if (currentPos > maxX) currentPos = 0;
                     item.style.left = currentPos + 'px';
                 }, 50);
             }
+            
+            // Add both touch and click events
+            item.addEventListener('touchstart', (e) => handleBlessingClick(item, e), { passive: false });
+            item.addEventListener('click', (e) => handleBlessingClick(item, e));
             
             collector.appendChild(item);
             
@@ -1056,7 +991,6 @@
             clearInterval(gameState.gameTimer);
             clearInterval(gameState.levelTimer);
             
-            document.body.classList.remove('game-active');
             document.getElementById('moonCollector').classList.remove('active');
             document.getElementById('startBtn').disabled = false;
             document.getElementById('pauseBtn').disabled = true;
@@ -1100,12 +1034,11 @@
             gameState.isGameOver = false;
             gameState.timeRemaining = 45;
             
-            document.body.classList.add('game-active');
             document.getElementById('startBtn').disabled = true;
             document.getElementById('pauseBtn').disabled = false;
             document.getElementById('moonCollector').classList.add('active');
             
-            showMessage("Game started! Tap the blessings! 🌙✨");
+            showMessage("Game started! Collect those blessings! 🌙✨");
             
             // Spawn items
             gameState.spawnInterval = setInterval(spawnBlessingItem, gameState.spawnRate);
@@ -1212,9 +1145,9 @@
         // Initialize the game
         createStars();
         updateDisplay();
-        showMessage('Welcome! Tap the blessings to collect them! Keep 50%+ accuracy! 🌙');
+        showMessage('Welcome to Eid Blessing Collector! Collect 5 blessings per level while keeping 50%+ accuracy! 🌙');
         
-        // Prevent zoom on double tap
+        // Prevent double-tap zoom on mobile
         let lastTouchEnd = 0;
         document.addEventListener('touchend', function(e) {
             const now = Date.now();
@@ -1222,14 +1155,7 @@
                 e.preventDefault();
             }
             lastTouchEnd = now;
-        }, { passive: false });
-        
-        // Prevent scroll refresh on mobile
-        document.addEventListener('touchmove', function(e) {
-            if (document.body.classList.contains('game-active')) {
-                e.preventDefault();
-            }
-        }, { passive: false });
+        }, false);
     </script>
     
     <div class="container" style="margin-top: 20px; text-align: center;">
