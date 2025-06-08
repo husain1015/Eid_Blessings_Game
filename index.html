@@ -584,7 +584,7 @@
             this.isPlaying = false;
             this.isPaused = false;
             this.spawnRate = 800; // Faster initial spawn
-            this.baseSpeed = 2500; // Shorter lifetime
+            this.baseSpeed = 1800; // Much shorter lifetime (was 2500)
             this.touchStart = null;
             this.activePowerUp = null;
             this.blessings = [];
@@ -805,7 +805,7 @@
             gameArea.appendChild(blessing);
             
             // Auto-remove after lifetime
-            const lifetime = type === 'special' ? 1500 : this.baseSpeed; // Special items disappear faster
+            const lifetime = type === 'special' ? 1000 : this.baseSpeed; // Special items only 1 second!
             setTimeout(() => {
                 if (blessing.parentElement && !blessing.collected) {
                     this.missBlessing(blessing);
@@ -917,9 +917,9 @@
         }
 
         adjustDifficulty() {
-            // Progressive difficulty - faster ramp up
+            // Progressive difficulty - much faster ramp up
             this.spawnRate = Math.max(200, this.spawnRate - 20); // Minimum 200ms between spawns
-            this.baseSpeed = Math.max(1000, this.baseSpeed - 30); // Minimum 1 second lifetime
+            this.baseSpeed = Math.max(600, this.baseSpeed - 40); // Minimum 0.6 second lifetime!
             
             // Clear and reset spawn interval
             clearInterval(this.spawnInterval);
@@ -1030,7 +1030,7 @@
             this.streak = 0;
             this.power = 0;
             this.spawnRate = 800; // Reset to harder initial spawn
-            this.baseSpeed = 2500; // Reset to shorter lifetime
+            this.baseSpeed = 1800; // Reset to much shorter lifetime
             
             document.getElementById('startBtn').disabled = true;
             document.getElementById('pauseBtn').disabled = false;
