@@ -3,759 +3,1062 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eid Mubarak - Blessing Collector Challenge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Eid Night Sky - Blessing Collector</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;800&display=swap');
 
 ```
     * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+
+    html, body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        position: fixed;
     }
 
     body {
-        font-family: 'Poppins', sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-        min-height: 100vh;
-        overflow-x: hidden;
-        position: relative;
+        font-family: 'Rubik', sans-serif;
+        background: #0a0a0a;
+        touch-action: none;
     }
 
-    .stars {
-        position: fixed;
+    .game-container {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+        background: linear-gradient(180deg, 
+            #0a0a0a 0%, 
+            #1a0b2e 20%, 
+            #2d1b69 50%, 
+            #462c7a 80%, 
+            #3d5a80 100%);
+        animation: skyShift 30s ease-in-out infinite;
+    }
+
+    @keyframes skyShift {
+        0%, 100% { filter: hue-rotate(0deg) brightness(1); }
+        50% { filter: hue-rotate(20deg) brightness(1.2); }
+    }
+
+    .aurora {
+        position: absolute;
+        width: 200%;
+        height: 100%;
         top: 0;
-        left: 0;
+        left: -50%;
+        background: radial-gradient(ellipse at center, 
+            transparent 0%, 
+            rgba(120, 255, 200, 0.1) 40%, 
+            transparent 70%);
+        animation: auroraWave 20s ease-in-out infinite;
+        pointer-events: none;
+    }
+
+    @keyframes auroraWave {
+        0%, 100% { transform: translateX(0) scaleY(1); opacity: 0.5; }
+        50% { transform: translateX(25%) scaleY(1.5); opacity: 0.8; }
+    }
+
+    .stars-layer {
+        position: absolute;
         width: 100%;
         height: 100%;
         pointer-events: none;
-        z-index: 1;
     }
 
     .star {
         position: absolute;
-        background: #fff;
+        background: white;
         border-radius: 50%;
-        animation: twinkle 2s infinite alternate;
+        animation: twinkle 3s ease-in-out infinite;
     }
 
     @keyframes twinkle {
-        0% { opacity: 0.3; transform: scale(1); }
-        100% { opacity: 1; transform: scale(1.2); }
+        0%, 100% { opacity: 0.2; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.2); }
     }
 
-    .container {
-        position: relative;
-        z-index: 10;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-        text-align: center;
+    .ui-top {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 15px;
+        z-index: 100;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
     }
 
-    .header {
-        margin-bottom: 20px;
-        animation: fadeInDown 1s ease-out;
-    }
-
-    .main-title {
-        font-family: 'Amiri', serif;
-        font-size: 3rem;
-        color: #fff;
-        text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
-        margin-bottom: 10px;
-        animation: glow 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes glow {
-        0% { text-shadow: 2px 2px 10px rgba(255,255,255,0.3); }
-        100% { text-shadow: 2px 2px 20px rgba(255,255,255,0.8); }
-    }
-
-    .subtitle {
-        font-size: 1.2rem;
-        color: #f0f8ff;
-        margin-bottom: 15px;
-    }
-
-    .game-area {
+    .score-display {
         background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        padding: 25px;
-        margin: 20px 0;
+        backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-    }
-
-    .game-stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 15px;
-        margin-bottom: 25px;
-    }
-
-    .stat-item {
-        background: rgba(255, 255, 255, 0.2);
-        padding: 15px;
-        border-radius: 15px;
-        color: #fff;
-        font-weight: 600;
-    }
-
-    .stat-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin-top: 5px;
-    }
-
-    .level-info {
-        background: linear-gradient(45deg, #ff6b6b, #ffa500);
+        border-radius: 20px;
+        padding: 10px 20px;
+        display: inline-block;
         color: white;
-        padding: 15px;
-        border-radius: 15px;
-        margin-bottom: 20px;
         font-weight: 600;
+        font-size: 1.2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
 
-    .progress-bar {
-        width: 100%;
-        height: 20px;
-        background: rgba(255, 255, 255, 0.3);
-        border-radius: 10px;
-        overflow: hidden;
-        margin: 10px 0;
+    .combo-display {
+        position: absolute;
+        top: 70px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 2rem;
+        font-weight: 800;
+        color: #ffd700;
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+        opacity: 0;
+        transition: all 0.3s ease;
     }
 
-    .progress-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #4ecdc4, #45b7d1);
-        border-radius: 10px;
-        transition: width 0.3s ease;
+    .combo-display.active {
+        opacity: 1;
+        animation: comboPulse 0.5s ease;
+    }
+
+    @keyframes comboPulse {
+        0% { transform: translateX(-50%) scale(0.8); }
+        50% { transform: translateX(-50%) scale(1.3); }
+        100% { transform: translateX(-50%) scale(1); }
+    }
+
+    .lives-container {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 30px;
+        padding: 8px 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .heart {
+        font-size: 1.5rem;
+        filter: drop-shadow(0 0 5px rgba(255, 0, 100, 0.5));
     }
 
     .lives-bar {
-        width: 100%;
-        height: 25px;
-        background: rgba(255, 50, 50, 0.3);
-        border-radius: 12px;
+        width: 80px;
+        height: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
         overflow: hidden;
-        margin: 15px 0;
-        border: 2px solid rgba(255, 255, 255, 0.3);
     }
 
     .lives-fill {
         height: 100%;
-        background: linear-gradient(90deg, #ff6b6b, #ff4757);
-        border-radius: 10px;
+        background: linear-gradient(90deg, #ff006e, #ff4500);
         transition: width 0.3s ease;
-        box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+        box-shadow: 0 0 10px rgba(255, 0, 110, 0.8);
     }
 
-    .lives-info {
-        background: rgba(255, 107, 107, 0.2);
-        color: white;
-        padding: 15px;
-        border-radius: 15px;
-        margin-bottom: 20px;
-        font-weight: 600;
-        border: 1px solid rgba(255, 107, 107, 0.3);
-    }
-
-    .moon-collector {
-        position: relative;
-        height: 400px;
-        border: 2px dashed rgba(255, 255, 255, 0.3);
-        border-radius: 15px;
-        margin: 25px 0;
-        overflow: hidden;
-        background: rgba(0, 0, 50, 0.2);
-    }
-
-    .blessing-item {
+    .game-area {
         position: absolute;
+        top: 100px;
+        bottom: 100px;
+        left: 10px;
+        right: 10px;
+        pointer-events: all;
+    }
+
+    .blessing {
+        position: absolute;
+        width: 60px;
+        height: 60px;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: transform 0.2s ease;
+    }
+
+    .blessing.moon {
+        background: radial-gradient(circle at 30% 30%, #ffd700, #ffed4e);
+        border-radius: 50%;
+        box-shadow: 
+            0 0 40px rgba(255, 215, 0, 0.8),
+            inset -5px -5px 15px rgba(255, 200, 0, 0.5),
+            0 0 80px rgba(255, 215, 0, 0.4);
         animation: float 3s ease-in-out infinite;
     }
 
-    .blessing-item:hover {
-        transform: scale(1.1);
-    }
-
-    .crescent-moon {
-        width: 35px;
-        height: 35px;
-        background: #ffd700;
-        border-radius: 50%;
-        box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
-    }
-
-    .crescent-moon::before {
-        content: '';
-        position: absolute;
-        top: 4px;
-        left: 7px;
-        width: 22px;
-        height: 22px;
-        background: rgba(0, 0, 50, 0.4);
-        border-radius: 50%;
-    }
-
-    .lantern {
-        width: 40px;
-        height: 50px;
-        background: linear-gradient(45deg, #ff6b6b, #ffa500);
-        border-radius: 20px 20px 10px 10px;
-    }
-
-    .lantern::before {
-        content: '';
-        position: absolute;
-        top: -6px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 15px;
-        height: 10px;
-        background: #333;
-        border-radius: 8px 8px 0 0;
-    }
-
-    .star-blessing {
-        width: 30px;
-        height: 30px;
-        background: #f093fb;
+    .blessing.star {
+        background: linear-gradient(135deg, #ff00ff, #00ffff);
         clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-        box-shadow: 0 0 12px rgba(240, 147, 251, 0.7);
+        box-shadow: 0 0 30px rgba(255, 0, 255, 0.8);
+        animation: spin 4s linear infinite;
+    }
+
+    .blessing.gem {
+        background: linear-gradient(135deg, #00ff88, #00ffff);
+        clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+        box-shadow: 0 0 40px rgba(0, 255, 200, 0.8);
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    .blessing.special {
+        background: radial-gradient(circle, #fff, #ffd700);
+        border-radius: 50%;
+        box-shadow: 
+            0 0 50px rgba(255, 255, 255, 1),
+            0 0 100px rgba(255, 215, 0, 0.8);
+        animation: specialGlow 1s ease-in-out infinite;
     }
 
     @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-8px); }
+        0%, 100% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(-10px) scale(1.05); }
     }
 
-    .buttons {
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    @keyframes specialGlow {
+        0%, 100% { 
+            transform: scale(1);
+            box-shadow: 
+                0 0 50px rgba(255, 255, 255, 1),
+                0 0 100px rgba(255, 215, 0, 0.8);
+        }
+        50% { 
+            transform: scale(1.2);
+            box-shadow: 
+                0 0 80px rgba(255, 255, 255, 1),
+                0 0 150px rgba(255, 215, 0, 1);
+        }
+    }
+
+    .trail {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: hidden;
+    }
+
+    .trail-line {
+        position: absolute;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #ffd700, transparent);
+        transform-origin: left center;
+        animation: trailFade 0.5s ease-out forwards;
+    }
+
+    @keyframes trailFade {
+        0% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+
+    .collect-effect {
+        position: absolute;
+        pointer-events: none;
+        animation: collectBurst 0.6s ease-out forwards;
+    }
+
+    @keyframes collectBurst {
+        0% { 
+            transform: scale(0) rotate(0deg);
+            opacity: 1;
+        }
+        100% { 
+            transform: scale(3) rotate(180deg);
+            opacity: 0;
+        }
+    }
+
+    .power-bar {
+        position: absolute;
+        bottom: 80px;
+        left: 20px;
+        right: 20px;
+        height: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .power-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #ff00ff, #00ffff, #ffff00);
+        width: 0%;
+        transition: width 0.3s ease;
+        box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+    }
+
+    .controls {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 15px;
         display: flex;
-        gap: 15px;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin: 25px 0;
+        gap: 10px;
+        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
     }
 
     .btn {
-        background: linear-gradient(45deg, #ff6b6b, #ffa500);
+        flex: 1;
+        background: linear-gradient(135deg, #ff006e, #ff4500);
         border: none;
-        padding: 12px 25px;
-        border-radius: 25px;
+        padding: 15px;
+        border-radius: 15px;
         color: white;
-        font-size: 1rem;
         font-weight: 600;
+        font-size: 1rem;
         cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        box-shadow: 0 5px 20px rgba(255, 0, 110, 0.4);
+        transition: all 0.2s ease;
+        position: relative;
+        overflow: hidden;
     }
 
-    .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    .btn:active {
+        transform: scale(0.95);
     }
 
     .btn:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
+        opacity: 0.5;
         transform: none;
     }
 
-    .message-display {
-        background: rgba(255, 255, 255, 0.9);
-        color: #333;
-        padding: 15px;
-        border-radius: 15px;
-        margin: 20px 0;
-        font-size: 1.1rem;
-        font-weight: 600;
-        min-height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
     }
 
-    .fireworks {
+    .btn:active::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .message-popup {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255, 255, 255, 0.95);
+        color: #333;
+        padding: 20px 40px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 1.2rem;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        z-index: 200;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s ease;
+    }
+
+    .message-popup.show {
+        opacity: 1;
+        animation: messagePopup 0.5s ease;
+    }
+
+    @keyframes messagePopup {
+        0% { transform: translate(-50%, -50%) scale(0.8); }
+        50% { transform: translate(-50%, -50%) scale(1.1); }
+        100% { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    .game-over {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
         pointer-events: none;
-        z-index: 20;
+        transition: opacity 0.5s ease;
     }
 
-    .firework {
+    .game-over.show {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .game-over-content {
+        background: linear-gradient(135deg, #1a0b2e, #2d1b69);
+        padding: 40px;
+        border-radius: 30px;
+        text-align: center;
+        color: white;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        transform: scale(0.8);
+        transition: transform 0.3s ease;
+    }
+
+    .game-over.show .game-over-content {
+        transform: scale(1);
+    }
+
+    .final-score {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #ffd700;
+        text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+        margin: 20px 0;
+    }
+
+    .streak-indicator {
+        position: absolute;
+        top: 120px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 1rem;
+        color: #ff4500;
+        font-weight: 600;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .streak-indicator.show {
+        opacity: 1;
+    }
+
+    .particle {
         position: absolute;
         width: 4px;
         height: 4px;
+        background: #ffd700;
         border-radius: 50%;
-        animation: firework 1s ease-out forwards;
+        pointer-events: none;
+        animation: particleFloat 2s ease-out forwards;
     }
 
-    @keyframes firework {
-        0% { 
-            transform: scale(1);
+    @keyframes particleFloat {
+        0% {
+            transform: translate(0, 0) scale(1);
             opacity: 1;
         }
-        100% { 
-            transform: scale(15);
+        100% {
+            transform: translate(var(--dx), var(--dy)) scale(0);
             opacity: 0;
         }
     }
 
-    .game-over-popup {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(0);
-        background: rgba(255, 255, 255, 0.95);
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        text-align: center;
-        z-index: 100;
-        max-width: 500px;
-        width: 90%;
+    .screen-shake {
+        animation: shake 0.5s ease-in-out;
     }
 
-    .game-over-popup.show {
-        animation: popupShow 0.5s ease-out forwards;
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
     }
 
-    @keyframes popupShow {
-        0% { transform: translate(-50%, -50%) scale(0); }
-        100% { transform: translate(-50%, -50%) scale(1); }
+    .power-up-icon {
+        position: absolute;
+        top: 150px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        opacity: 0;
+        transform: scale(0);
+        transition: all 0.3s ease;
     }
 
-    .game-over-title {
-        font-family: 'Amiri', serif;
-        font-size: 2.5rem;
-        color: #ff6b6b;
-        margin-bottom: 20px;
+    .power-up-icon.show {
+        opacity: 1;
+        transform: scale(1);
+        animation: powerUpPulse 2s ease-in-out infinite;
     }
 
-    .game-over-message {
-        font-size: 1.3rem;
-        color: #333;
-        margin-bottom: 20px;
-        line-height: 1.6;
-    }
-
-    .final-stats {
-        background: rgba(240, 147, 251, 0.1);
-        padding: 20px;
-        border-radius: 15px;
-        margin: 20px 0;
-    }
-
-    @keyframes fadeInDown {
-        0% { opacity: 0; transform: translateY(-30px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 768px) {
-        .main-title { font-size: 2.2rem; }
-        .subtitle { font-size: 1rem; }
-        .game-stats { grid-template-columns: repeat(2, 1fr); }
-        .moon-collector { height: 300px; }
-        .buttons { flex-direction: column; align-items: center; }
+    @keyframes powerUpPulse {
+        0%, 100% { 
+            transform: scale(1);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+        50% { 
+            transform: scale(1.1);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.8);
+        }
     }
 </style>
 ```
 
 </head>
 <body>
-    <div class="stars" id="stars"></div>
-    <div class="fireworks" id="fireworks"></div>
+    <div class="game-container" id="gameContainer">
+        <div class="aurora"></div>
+        <div class="stars-layer" id="starsLayer"></div>
+        <div class="trail" id="trail"></div>
 
 ```
-<div class="container">
-    <div class="header">
-        <h1 class="main-title">🌙 Eid Blessing Collector 🌟</h1>
-        <p class="subtitle">Collect blessings before they disappear! You can miss up to 200 blessings.</p>
-    </div>
-
-    <div class="game-area">
-        <div class="level-info">
-            <div>Level <span id="currentLevel">1</span> - <span id="levelName">Peaceful Evening</span></div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="levelProgressBar" style="width: 0%"></div>
-            </div>
-            <div style="font-size: 0.9rem; margin-top: 5px;">Time: <span id="timeRemaining">45</span>s | Speed: <span id="gameSpeed">Peaceful</span></div>
+    <div class="ui-top">
+        <div class="score-display">
+            <span id="score">0</span> ✨
         </div>
-
-        <div class="lives-info">
-            <div>❤️ Lives Remaining: <span id="livesPercent">100%</span> (<span id="missedCount">0</span>/200 missed)</div>
+        <div class="combo-display" id="comboDisplay">
+            <span id="comboText"></span>
+        </div>
+        <div class="streak-indicator" id="streakIndicator">
+            🔥 Streak: <span id="streakCount">0</span>
+        </div>
+        <div class="lives-container">
+            <span class="heart">❤️</span>
             <div class="lives-bar">
                 <div class="lives-fill" id="livesBar" style="width: 100%"></div>
             </div>
         </div>
-
-        <div class="game-stats">
-            <div class="stat-item">
-                <div>🌙 Collected</div>
-                <div class="stat-value" id="collected">0</div>
-            </div>
-            <div class="stat-item">
-                <div>🎯 Level Progress</div>
-                <div class="stat-value" id="levelProgress">0/5</div>
-            </div>
-        </div>
-
-        <div class="message-display" id="messageDisplay">
-            Get ready! Level 1 starting... Collect blessings! You can miss up to 200.
-        </div>
-
-        <div class="moon-collector" id="moonCollector">
-            <!-- Blessing items will be spawned here -->
-        </div>
-
-        <div class="buttons">
-            <button class="btn" id="startBtn" onclick="startGame()">🎮 Start Game</button>
-            <button class="btn" id="pauseBtn" onclick="togglePause()" disabled>⏸️ Pause</button>
-            <button class="btn" onclick="restartGame()">🔄 Restart</button>
-        </div>
     </div>
+
+    <div class="power-up-icon" id="powerUpIcon"></div>
+
+    <div class="game-area" id="gameArea"></div>
+
+    <div class="power-bar">
+        <div class="power-fill" id="powerFill"></div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" id="startBtn" onclick="game.start()">START</button>
+        <button class="btn" id="pauseBtn" onclick="game.togglePause()" disabled>PAUSE</button>
+    </div>
+
+    <div class="message-popup" id="messagePopup"></div>
 </div>
 
-<div class="game-over-popup" id="gameOverPopup">
-    <div class="game-over-title">Game Over!</div>
-    <div class="game-over-message" id="gameOverMessage"></div>
-    <div class="final-stats" id="finalStats"></div>
-    <button class="btn" onclick="closeGameOver()">Play Again! 🎮</button>
+<div class="game-over" id="gameOver">
+    <div class="game-over-content">
+        <h2 style="font-size: 2rem; margin-bottom: 20px;">✨ Eid Mubarak! ✨</h2>
+        <div class="final-score" id="finalScore">0</div>
+        <p style="margin-bottom: 30px; opacity: 0.8;">May your blessings multiply!</p>
+        <button class="btn" onclick="game.restart()" style="min-width: 200px;">PLAY AGAIN</button>
+    </div>
 </div>
 
 <script>
-    let gameState = {
-        level: 1,
-        collected: 0,
-        missed: 0,
-        maxMisses: 200,
-        streak: 0,
-        timeRemaining: 45,
-        isPlaying: false,
-        isPaused: false,
-        spawnInterval: null,
-        gameTimer: null,
-        levelTimer: null,
-        spawnRate: 1200,
-        itemLifetime: 4000,
-        itemSpeed: 4000,
-        levelTarget: 5,
-        levelCollected: 0
-    };
-
-    const levelNames = [
-        "Peaceful Evening", "Gentle Breeze", "Rising Stars", "Dancing Lights", 
-        "Swift Winds", "Meteor Shower", "Lightning Speed", "Cosmic Storm",
-        "Time Warp", "Ultimate Challenge"
-    ];
-
-    const gameOverMessages = [
-        "Your blessing collection journey ends here! 🌙\nMay your efforts be rewarded in this world and the next.",
-        "Alhamdulillahi rabbil alameen! Well played! 🤲\nEvery blessing you collected counts in Allah's sight.",
-        "Masha'Allah! You showed great dedication! ✨\nRemember, persistence in good deeds is beloved to Allah.",
-        "Subhan'Allah! What a beautiful effort! 🌟\nYour journey of collecting blessings was truly admirable.",
-        "Barakallahu feeki! Excellent attempt! 🎊\nMay your real-life blessings multiply like the stars above.",
-        "La hawla wa la quwwata illa billah! 🌸\nSometimes we pause to reflect and appreciate Allah's countless gifts."
-    ];
-
-    function createStars() {
-        const starsContainer = document.getElementById('stars');
-        for (let i = 0; i < 80; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.width = star.style.height = Math.random() * 3 + 1 + 'px';
-            star.style.animationDelay = Math.random() * 2 + 's';
-            starsContainer.appendChild(star);
+    class EidNightSky {
+        constructor() {
+            this.score = 0;
+            this.lives = 200;
+            this.combo = 0;
+            this.streak = 0;
+            this.power = 0;
+            this.isPlaying = false;
+            this.isPaused = false;
+            this.spawnRate = 1000;
+            this.baseSpeed = 3000;
+            this.touchStart = null;
+            this.activePowerUp = null;
+            this.blessings = [];
+            
+            this.init();
         }
-    }
 
-    function updateDisplay() {
-        document.getElementById('currentLevel').textContent = gameState.level;
-        document.getElementById('levelName').textContent = levelNames[Math.min(gameState.level - 1, levelNames.length - 1)];
-        document.getElementById('collected').textContent = gameState.collected;
-        document.getElementById('levelProgress').textContent = gameState.levelCollected + '/' + gameState.levelTarget;
-        document.getElementById('timeRemaining').textContent = gameState.timeRemaining;
-        
-        // Update lives display
-        const livesRemaining = gameState.maxMisses - gameState.missed;
-        const livesPercent = Math.max(0, Math.round((livesRemaining / gameState.maxMisses) * 100));
-        document.getElementById('livesPercent').textContent = livesPercent + '%';
-        document.getElementById('missedCount').textContent = gameState.missed;
-        document.getElementById('livesBar').style.width = livesPercent + '%';
-        
-        const levelProgressPercent = (gameState.levelCollected / gameState.levelTarget) * 100;
-        document.getElementById('levelProgressBar').style.width = levelProgressPercent + '%';
-        
-        const speed = gameState.spawnRate > 1000 ? 'Peaceful' : 
-                     gameState.spawnRate > 800 ? 'Gentle' : 
-                     gameState.spawnRate > 600 ? 'Normal' :
-                     gameState.spawnRate > 400 ? 'Fast' : 'Swift';
-        document.getElementById('gameSpeed').textContent = speed;
-    }
+        init() {
+            this.createStars();
+            this.setupTouchHandlers();
+            this.setupAudio();
+        }
 
-    function showMessage(message) {
-        document.getElementById('messageDisplay').textContent = message;
-    }
+        setupAudio() {
+            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            this.masterGain = this.audioCtx.createGain();
+            this.masterGain.gain.value = 0.3;
+            this.masterGain.connect(this.audioCtx.destination);
+        }
 
-    function spawnBlessingItem() {
-        if (!gameState.isPlaying || gameState.isPaused) return;
-        
-        const collector = document.getElementById('moonCollector');
-        const item = document.createElement('div');
-        item.className = 'blessing-item';
-        
-        // Random blessing type
-        const types = ['crescent-moon', 'lantern', 'star-blessing'];
-        const type = types[Math.floor(Math.random() * types.length)];
-        item.classList.add(type);
-        
-        // Random position
-        const maxX = collector.offsetWidth - 50;
-        const maxY = collector.offsetHeight - 60;
-        item.style.left = Math.random() * maxX + 'px';
-        item.style.top = Math.random() * maxY + 'px';
-        item.style.animationDelay = Math.random() * 2 + 's';
-        
-        item.onclick = function() {
-            gameState.collected++;
-            gameState.levelCollected++;
-            gameState.streak++;
+        playSound(frequencies, duration = 0.1) {
+            frequencies.forEach((freq, i) => {
+                setTimeout(() => {
+                    const osc = this.audioCtx.createOscillator();
+                    const gain = this.audioCtx.createGain();
+                    
+                    osc.connect(gain);
+                    gain.connect(this.masterGain);
+                    
+                    osc.frequency.value = freq;
+                    osc.type = 'sine';
+                    
+                    gain.gain.setValueAtTime(0.3, this.audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + duration);
+                    
+                    osc.start();
+                    osc.stop(this.audioCtx.currentTime + duration);
+                }, i * 50);
+            });
+        }
+
+        createStars() {
+            const container = document.getElementById('starsLayer');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                const size = Math.random() * 3 + 1;
+                star.style.width = star.style.height = size + 'px';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                container.appendChild(star);
+            }
+        }
+
+        setupTouchHandlers() {
+            const gameArea = document.getElementById('gameArea');
+            let isDrawing = false;
+            let lastX = 0, lastY = 0;
+
+            const startDrawing = (e) => {
+                if (!this.isPlaying || this.isPaused) return;
+                isDrawing = true;
+                const touch = e.touches ? e.touches[0] : e;
+                lastX = touch.clientX;
+                lastY = touch.clientY;
+            };
+
+            const draw = (e) => {
+                if (!isDrawing) return;
+                
+                const touch = e.touches ? e.touches[0] : e;
+                const currentX = touch.clientX;
+                const currentY = touch.clientY;
+                
+                // Create trail effect
+                this.createTrail(lastX, lastY, currentX, currentY);
+                
+                // Check for blessing collection
+                this.checkSwipeCollection(currentX, currentY);
+                
+                lastX = currentX;
+                lastY = currentY;
+            };
+
+            const stopDrawing = () => {
+                isDrawing = false;
+            };
+
+            gameArea.addEventListener('touchstart', startDrawing, {passive: false});
+            gameArea.addEventListener('touchmove', draw, {passive: false});
+            gameArea.addEventListener('touchend', stopDrawing);
             
-            // Increase speed after each blessing collected
-            gameState.spawnRate = Math.max(300, gameState.spawnRate - 50);
-            gameState.itemLifetime = Math.max(2000, gameState.itemLifetime - 100);
+            gameArea.addEventListener('mousedown', startDrawing);
+            gameArea.addEventListener('mousemove', draw);
+            gameArea.addEventListener('mouseup', stopDrawing);
+        }
+
+        createTrail(x1, y1, x2, y2) {
+            const trail = document.getElementById('trail');
+            const line = document.createElement('div');
+            line.className = 'trail-line';
             
-            // Level up after collecting 5 blessings
-            if (gameState.levelCollected >= gameState.levelTarget) {
-                levelUp();
-                clearInterval(gameState.spawnInterval);
-                gameState.spawnInterval = setInterval(spawnBlessingItem, gameState.spawnRate);
+            const angle = Math.atan2(y2 - y1, x2 - x1);
+            const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+            
+            line.style.left = x1 + 'px';
+            line.style.top = y1 + 'px';
+            line.style.width = distance + 'px';
+            line.style.transform = `rotate(${angle}rad)`;
+            
+            trail.appendChild(line);
+            setTimeout(() => line.remove(), 500);
+        }
+
+        checkSwipeCollection(x, y) {
+            const blessings = document.querySelectorAll('.blessing');
+            blessings.forEach(blessing => {
+                const rect = blessing.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                const distance = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
+                
+                if (distance < 40 && !blessing.collected) {
+                    this.collectBlessing(blessing);
+                }
+            });
+        }
+
+        spawnBlessing() {
+            if (!this.isPlaying || this.isPaused) return;
+            
+            const gameArea = document.getElementById('gameArea');
+            const blessing = document.createElement('div');
+            blessing.className = 'blessing';
+            
+            // Determine type with weighted probability
+            const rand = Math.random();
+            let type, value;
+            
+            if (rand < 0.05) { // 5% special
+                type = 'special';
+                value = 50;
+            } else if (rand < 0.2) { // 15% gem
+                type = 'gem';
+                value = 10;
+            } else if (rand < 0.5) { // 30% star
+                type = 'star';
+                value = 5;
+            } else { // 50% moon
+                type = 'moon';
+                value = 1;
             }
             
-            updateDisplay();
-            createFirework(
-                item.offsetLeft + collector.offsetLeft + 20, 
-                item.offsetTop + collector.offsetTop + 20
-            );
+            blessing.classList.add(type);
+            blessing.dataset.value = value;
             
-            const messages = [
-                `Barakallahu feeki! (${gameState.levelCollected}/5) ✨`, 
-                `Masha'Allah! (${gameState.levelCollected}/5) 🌟`, 
-                `Alhamdulillah! (${gameState.levelCollected}/5) 🤲`,
-                `Excellent! (${gameState.levelCollected}/5) 🎊`, 
-                `Keep going! (${gameState.levelCollected}/5) 💫`, 
-                `Well done! (${gameState.levelCollected}/5) 🌙`
-            ];
-            showMessage(messages[Math.floor(Math.random() * messages.length)]);
-            item.remove();
-        };
-        
-        collector.appendChild(item);
-        
-        // Remove after lifetime expires
-        setTimeout(() => {
-            if (item.parentElement) {
-                item.remove();
-                gameState.missed++;
-                updateDisplay();
-                
-                // Show warning messages at certain thresholds
-                if (gameState.missed === 50) {
-                    showMessage("⚠️ 50 blessings missed! Be careful!");
-                } else if (gameState.missed === 100) {
-                    showMessage("⚠️ 100 blessings missed! Halfway to game over!");
-                } else if (gameState.missed === 150) {
-                    showMessage("⚠️ 150 blessings missed! Danger zone!");
+            // Random position with edge bias for risk/reward
+            const edge = Math.random() < 0.3;
+            if (edge) {
+                // Spawn at edges for higher risk/reward
+                if (Math.random() < 0.5) {
+                    blessing.style.left = Math.random() < 0.5 ? '0px' : (gameArea.offsetWidth - 60) + 'px';
+                    blessing.style.top = Math.random() * (gameArea.offsetHeight - 60) + 'px';
+                } else {
+                    blessing.style.left = Math.random() * (gameArea.offsetWidth - 60) + 'px';
+                    blessing.style.top = Math.random() < 0.5 ? '0px' : (gameArea.offsetHeight - 60) + 'px';
                 }
-                
-                // Check for game over
-                if (gameState.missed >= gameState.maxMisses) {
-                    gameOver();
-                }
+                blessing.dataset.value = value * 2; // Double value for edge spawns
+            } else {
+                blessing.style.left = Math.random() * (gameArea.offsetWidth - 60) + 'px';
+                blessing.style.top = Math.random() * (gameArea.offsetHeight - 60) + 'px';
             }
-        }, gameState.itemLifetime);
-    }
-
-    function createFirework(x, y) {
-        const fireworksContainer = document.getElementById('fireworks');
-        const colors = ['#ff6b6b', '#ffd700', '#4ecdc4', '#45b7d1', '#f093fb', '#ffa500'];
-        
-        for (let i = 0; i < 8; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'firework';
-            particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            particle.style.left = x + 'px';
-            particle.style.top = y + 'px';
             
-            fireworksContainer.appendChild(particle);
-            setTimeout(() => particle.remove(), 1000);
-        }
-    }
-
-    function levelUp() {
-        gameState.level++;
-        gameState.levelCollected = 0; // Reset level progress
-        gameState.timeRemaining = 45; // Reset timer for new level
-        
-        // Additional speed boost when leveling up
-        gameState.spawnRate = Math.max(300, gameState.spawnRate - 100);
-        gameState.itemLifetime = Math.max(2000, gameState.itemLifetime - 200);
-        
-        showMessage(`Level ${gameState.level} - ${levelNames[Math.min(gameState.level - 1, levelNames.length - 1)]}! Collect 5 more blessings! 🚀`);
-        
-        // Celebration fireworks
-        for (let i = 0; i < 8; i++) {
+            // Click/tap handler for individual collection
+            blessing.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.collectBlessing(blessing);
+            });
+            
+            gameArea.appendChild(blessing);
+            
+            // Auto-remove after lifetime
+            const lifetime = type === 'special' ? 2000 : this.baseSpeed;
             setTimeout(() => {
-                createFirework(
-                    Math.random() * window.innerWidth,
-                    Math.random() * window.innerHeight * 0.7
-                );
-            }, i * 100);
+                if (blessing.parentElement && !blessing.collected) {
+                    this.missBlessing(blessing);
+                }
+            }, lifetime);
         }
-    }
 
-    function gameOver() {
-        gameState.isPlaying = false;
-        clearInterval(gameState.spawnInterval);
-        clearInterval(gameState.gameTimer);
-        clearInterval(gameState.levelTimer);
-        
-        document.getElementById('startBtn').disabled = false;
-        document.getElementById('pauseBtn').disabled = true;
-        
-        // Clear remaining items
-        document.getElementById('moonCollector').innerHTML = '';
-        
-        // Show game over popup
-        const popup = document.getElementById('gameOverPopup');
-        const message = document.getElementById('gameOverMessage');
-        const stats = document.getElementById('finalStats');
-        
-        const randomMessage = gameOverMessages[Math.floor(Math.random() * gameOverMessages.length)];
-        message.textContent = randomMessage;
-        
-        stats.innerHTML = `
-            <h3>Final Statistics</h3>
-            <p><strong>Level Reached:</strong> ${gameState.level}</p>
-            <p><strong>Total Blessings Collected:</strong> ${gameState.collected}</p>
-            <p><strong>Level Progress:</strong> ${gameState.levelCollected}/${gameState.levelTarget}</p>
-            <p><strong>Total Missed:</strong> ${gameState.missed}</p>
-            <p><strong>Lives Remaining:</strong> ${Math.max(0, Math.round(((gameState.maxMisses - gameState.missed) / gameState.maxMisses) * 100))}%</p>
-        `;
-        
-        popup.classList.add('show');
-    }
-
-    function startGame() {
-        gameState.isPlaying = true;
-        gameState.isPaused = false;
-        gameState.timeRemaining = 45;
-        
-        document.getElementById('startBtn').disabled = true;
-        document.getElementById('pauseBtn').disabled = false;
-        
-        showMessage("Game started! Collect those blessings! 🌙✨");
-        
-        // Spawn items
-        gameState.spawnInterval = setInterval(spawnBlessingItem, gameState.spawnRate);
-        
-        // Game timer
-        gameState.gameTimer = setInterval(() => {
-            if (gameState.isPaused) return;
+        collectBlessing(blessing) {
+            if (blessing.collected) return;
+            blessing.collected = true;
             
-            gameState.timeRemaining--;
-            updateDisplay();
+            const value = parseInt(blessing.dataset.value);
+            const multiplier = this.activePowerUp === 'double' ? 2 : 1;
+            this.score += value * multiplier * (1 + Math.floor(this.combo / 10));
             
-            if (gameState.timeRemaining <= 0) {
-                // Just reset timer when it reaches 0
-                gameState.timeRemaining = 45;
+            this.combo++;
+            this.streak++;
+            this.power = Math.min(100, this.power + 5);
+            
+            // Update displays
+            this.updateDisplay();
+            
+            // Visual effects
+            this.createCollectEffect(blessing);
+            
+            // Audio feedback
+            const type = blessing.classList[1];
+            if (type === 'special') {
+                this.playSound([523, 659, 784, 1047], 0.2);
+            } else {
+                this.playSound([523, 659], 0.1);
             }
-        }, 1000);
-        
-        updateDisplay();
-    }
+            
+            // Haptic feedback
+            if (navigator.vibrate) navigator.vibrate(30);
+            
+            // Remove blessing
+            blessing.style.transform = 'scale(1.5) rotate(180deg)';
+            blessing.style.opacity = '0';
+            setTimeout(() => blessing.remove(), 300);
+            
+            // Increase difficulty
+            this.adjustDifficulty();
+        }
 
-    function togglePause() {
-        gameState.isPaused = !gameState.isPaused;
-        const btn = document.getElementById('pauseBtn');
-        
-        if (gameState.isPaused) {
-            btn.textContent = '▶️ Resume';
-            showMessage('Game Paused - Click Resume to continue');
-        } else {
-            btn.textContent = '⏸️ Pause';
-            showMessage('Game Resumed! Keep collecting! 🌟');
+        missBlessing(blessing) {
+            blessing.remove();
+            
+            this.lives--;
+            this.combo = 0;
+            this.streak = 0;
+            
+            this.updateDisplay();
+            
+            // Screen shake effect
+            document.getElementById('gameContainer').classList.add('screen-shake');
+            setTimeout(() => {
+                document.getElementById('gameContainer').classList.remove('screen-shake');
+            }, 500);
+            
+            // Audio feedback
+            this.playSound([220], 0.3);
+            
+            // Haptic feedback
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+            
+            if (this.lives <= 0) {
+                this.gameOver();
+            }
+        }
+
+        createCollectEffect(blessing) {
+            const rect = blessing.getBoundingClientRect();
+            const gameArea = document.getElementById('gameArea');
+            
+            // Burst effect
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = (rect.left - gameArea.offsetLeft + 30) + 'px';
+                particle.style.top = (rect.top - gameArea.offsetTop + 30) + 'px';
+                particle.style.setProperty('--dx', (Math.random() - 0.5) * 100 + 'px');
+                particle.style.setProperty('--dy', (Math.random() - 0.5) * 100 + 'px');
+                particle.style.background = blessing.classList.contains('special') ? '#fff' : '#ffd700';
+                
+                gameArea.appendChild(particle);
+                setTimeout(() => particle.remove(), 2000);
+            }
+            
+            // Show combo
+            if (this.combo > 1) {
+                const comboDisplay = document.getElementById('comboDisplay');
+                document.getElementById('comboText').textContent = `${this.combo}x COMBO!`;
+                comboDisplay.classList.add('active');
+                
+                clearTimeout(this.comboTimeout);
+                this.comboTimeout = setTimeout(() => {
+                    comboDisplay.classList.remove('active');
+                }, 1000);
+            }
+            
+            // Show streak
+            if (this.streak >= 10) {
+                document.getElementById('streakCount').textContent = this.streak;
+                document.getElementById('streakIndicator').classList.add('show');
+            } else {
+                document.getElementById('streakIndicator').classList.remove('show');
+            }
+        }
+
+        adjustDifficulty() {
+            // Progressive difficulty
+            this.spawnRate = Math.max(300, this.spawnRate - 10);
+            this.baseSpeed = Math.max(1500, this.baseSpeed - 20);
+            
+            // Clear and reset spawn interval
+            clearInterval(this.spawnInterval);
+            this.spawnInterval = setInterval(() => this.spawnBlessing(), this.spawnRate);
+        }
+
+        activatePowerUp() {
+            if (this.power < 100) return;
+            
+            this.power = 0;
+            const powerUps = ['timeWarp', 'double', 'magnet', 'starStorm'];
+            const selected = powerUps[Math.floor(Math.random() * powerUps.length)];
+            
+            this.activePowerUp = selected;
+            const icon = document.getElementById('powerUpIcon');
+            
+            switch(selected) {
+                case 'timeWarp':
+                    icon.textContent = '⏰';
+                    this.showMessage('Time Warp Activated!');
+                    this.baseSpeed *= 2;
+                    setTimeout(() => {
+                        this.baseSpeed /= 2;
+                        this.activePowerUp = null;
+                        icon.classList.remove('show');
+                    }, 10000);
+                    break;
+                    
+                case 'double':
+                    icon.textContent = '2️⃣';
+                    this.showMessage('Double Points!');
+                    setTimeout(() => {
+                        this.activePowerUp = null;
+                        icon.classList.remove('show');
+                    }, 10000);
+                    break;
+                    
+                case 'magnet':
+                    icon.textContent = '🧲';
+                    this.showMessage('Magnet Active!');
+                    // Auto-collect nearby blessings
+                    this.magnetInterval = setInterval(() => {
+                        const blessings = document.querySelectorAll('.blessing');
+                        blessings.forEach(b => {
+                            const rect = b.getBoundingClientRect();
+                            if (rect.left > window.innerWidth * 0.3 && rect.left < window.innerWidth * 0.7) {
+                                this.collectBlessing(b);
+                            }
+                        });
+                    }, 100);
+                    setTimeout(() => {
+                        clearInterval(this.magnetInterval);
+                        this.activePowerUp = null;
+                        icon.classList.remove('show');
+                    }, 8000);
+                    break;
+                    
+                case 'starStorm':
+                    icon.textContent = '🌟';
+                    this.showMessage('Star Storm!');
+                    for (let i = 0; i < 20; i++) {
+                        setTimeout(() => this.spawnBlessing(), i * 200);
+                    }
+                    setTimeout(() => {
+                        this.activePowerUp = null;
+                        icon.classList.remove('show');
+                    }, 5000);
+                    break;
+            }
+            
+            icon.classList.add('show');
+            this.playSound([440, 554, 659, 880], 0.2);
+            this.updateDisplay();
+        }
+
+        updateDisplay() {
+            document.getElementById('score').textContent = this.score;
+            document.getElementById('livesBar').style.width = (this.lives / 200 * 100) + '%';
+            document.getElementById('powerFill').style.width = this.power + '%';
+            
+            // Check for power-up activation
+            if (this.power >= 100 && !this.activePowerUp) {
+                this.activatePowerUp();
+            }
+        }
+
+        showMessage(text) {
+            const popup = document.getElementById('messagePopup');
+            popup.textContent = text;
+            popup.classList.add('show');
+            
+            clearTimeout(this.messageTimeout);
+            this.messageTimeout = setTimeout(() => {
+                popup.classList.remove('show');
+            }, 2000);
+        }
+
+        start() {
+            if (this.isPlaying) return;
+            
+            this.isPlaying = true;
+            this.score = 0;
+            this.lives = 200;
+            this.combo = 0;
+            this.streak = 0;
+            this.power = 0;
+            this.spawnRate = 1000;
+            this.baseSpeed = 3000;
+            
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('pauseBtn').disabled = false;
+            document.getElementById('gameArea').innerHTML = '';
+            
+            this.updateDisplay();
+            this.showMessage("Swipe to collect blessings!");
+            
+            // Start spawning
+            this.spawnInterval = setInterval(() => this.spawnBlessing(), this.spawnRate);
+            
+            // Audio
+            this.playSound([261, 329, 392], 0.2);
+        }
+
+        togglePause() {
+            if (!this.isPlaying) return;
+            
+            this.isPaused = !this.isPaused;
+            const btn = document.getElementById('pauseBtn');
+            
+            if (this.isPaused) {
+                btn.textContent = 'RESUME';
+                this.showMessage('Paused');
+                clearInterval(this.spawnInterval);
+            } else {
+                btn.textContent = 'PAUSE';
+                this.showMessage('Resumed!');
+                this.spawnInterval = setInterval(() => this.spawnBlessing(), this.spawnRate);
+            }
+            
+            this.playSound([440], 0.1);
+        }
+
+        gameOver() {
+            this.isPlaying = false;
+            clearInterval(this.spawnInterval);
+            clearInterval(this.magnetInterval);
+            
+            document.getElementById('finalScore').textContent = this.score;
+            document.getElementById('gameOver').classList.add('show');
+            
+            // Game over sound
+            this.playSound([440, 330, 220], 0.3);
+            
+            // Long vibration
+            if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+        }
+
+        restart() {
+            document.getElementById('gameOver').classList.remove('show');
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('pauseBtn').disabled = true;
+            document.getElementById('pauseBtn').textContent = 'PAUSE';
+            document.getElementById('powerUpIcon').classList.remove('show');
+            
+            this.activePowerUp = null;
+            this.start();
         }
     }
 
-    function restartGame() {
-        // Reset game state
-        gameState = {
-            level: 1,
-            collected: 0,
-            missed: 0,
-            maxMisses: 200,
-            streak: 0,
-            timeRemaining: 45,
-            isPlaying: false,
-            isPaused: false,
-            spawnInterval: null,
-            gameTimer: null,
-            levelTimer: null,
-            spawnRate: 1200,
-            itemLifetime: 4000,
-            itemSpeed: 4000,
-            levelTarget: 5,
-            levelCollected: 0
-        };
-        
-        // Clear intervals
-        clearInterval(gameState.spawnInterval);
-        clearInterval(gameState.gameTimer);
-        clearInterval(gameState.levelTimer);
-        
-        // Clear game area
-        document.getElementById('moonCollector').innerHTML = '';
-        
-        // Reset UI
-        document.getElementById('startBtn').disabled = false;
-        document.getElementById('pauseBtn').disabled = true;
-        document.getElementById('pauseBtn').textContent = '⏸️ Pause';
-        
-        updateDisplay();
-        showMessage('Game Reset! Collect 5 blessings per level. You can miss up to 200! 🎮');
-    }
-
-    function closeGameOver() {
-        document.getElementById('gameOverPopup').classList.remove('show');
-        restartGame();
-    }
-
-    // Initialize the game
-    createStars();
-    updateDisplay();
-    showMessage('Welcome to Eid Blessing Collector! Collect 5 blessings per level. You can miss up to 200! 🌙');
+    // Initialize game
+    const game = new EidNightSky();
+    
+    // Prevent scrolling
+    document.addEventListener('touchmove', e => e.preventDefault(), {passive: false});
 </script>
-
-<div class="container" style="margin-top: 20px; text-align: center;">
-    <div style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-radius: 15px; padding: 15px; margin: 20px auto; max-width: 400px; border: 1px solid rgba(255, 255, 255, 0.2);">
-        <p style="color: #f0f8ff; font-size: 0.9rem; margin: 0;">
-            🎮 Developed by <strong>Husain Attarwala</strong> 🌙
-        </p>
-    </div>
-</div>
 ```
 
 </body>
