@@ -577,7 +577,7 @@
     class EidNightSky {
         constructor() {
             this.score = 0;
-            this.lives = 150; // Reduced from 200
+            this.lives = 50; // Much shorter game (was 150)
             this.combo = 0;
             this.streak = 0;
             this.power = 0;
@@ -860,11 +860,20 @@
             
             this.updateDisplay();
             
-            // Screen shake effect
-            document.getElementById('gameContainer').classList.add('screen-shake');
-            setTimeout(() => {
-                document.getElementById('gameContainer').classList.remove('screen-shake');
-            }, 500);
+            // Show warning messages at critical points
+            if (this.lives === 25) {
+                this.showMessage("⚠️ Halfway to game over!");
+                document.getElementById('gameContainer').classList.add('screen-shake');
+                setTimeout(() => {
+                    document.getElementById('gameContainer').classList.remove('screen-shake');
+                }, 500);
+            } else if (this.lives === 10) {
+                this.showMessage("💀 DANGER! Only 10 lives left!");
+                document.getElementById('gameContainer').classList.add('screen-shake');
+                setTimeout(() => {
+                    document.getElementById('gameContainer').classList.remove('screen-shake');
+                }, 500);
+            }
             
             // Audio feedback
             this.playSound([220], 0.3);
@@ -997,7 +1006,7 @@
 
         updateDisplay() {
             document.getElementById('score').textContent = this.score;
-            document.getElementById('livesBar').style.width = (this.lives / 150 * 100) + '%';
+            document.getElementById('livesBar').style.width = (this.lives / 50 * 100) + '%';
             document.getElementById('powerFill').style.width = this.power + '%';
             
             // Check for power-up activation
@@ -1025,7 +1034,7 @@
             
             this.isPlaying = true;
             this.score = 0;
-            this.lives = 150; // Reset to 150
+            this.lives = 50; // Reset to 50
             this.combo = 0;
             this.streak = 0;
             this.power = 0;
