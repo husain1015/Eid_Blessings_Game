@@ -577,7 +577,7 @@
     class EidNightSky {
         constructor() {
             this.score = 0;
-            this.lives = 50; // Much shorter game (was 150)
+            this.lives = 25; // Ultra-short game (was 50)
             this.combo = 0;
             this.streak = 0;
             this.power = 0;
@@ -861,18 +861,26 @@
             this.updateDisplay();
             
             // Show warning messages at critical points
-            if (this.lives === 25) {
-                this.showMessage("⚠️ Halfway to game over!");
+            if (this.lives === 15) {
+                this.showMessage("⚠️ 15 lives remaining!");
                 document.getElementById('gameContainer').classList.add('screen-shake');
                 setTimeout(() => {
                     document.getElementById('gameContainer').classList.remove('screen-shake');
                 }, 500);
             } else if (this.lives === 10) {
-                this.showMessage("💀 DANGER! Only 10 lives left!");
+                this.showMessage("🔥 DANGER! Only 10 lives!");
                 document.getElementById('gameContainer').classList.add('screen-shake');
                 setTimeout(() => {
                     document.getElementById('gameContainer').classList.remove('screen-shake');
                 }, 500);
+            } else if (this.lives === 5) {
+                this.showMessage("💀 CRITICAL! 5 LIVES LEFT!");
+                document.getElementById('gameContainer').classList.add('screen-shake');
+                setTimeout(() => {
+                    document.getElementById('gameContainer').classList.remove('screen-shake');
+                }, 500);
+                // Make the lives bar pulse red
+                document.getElementById('livesBar').style.animation = 'pulse 0.5s infinite';
             }
             
             // Audio feedback
@@ -1006,7 +1014,7 @@
 
         updateDisplay() {
             document.getElementById('score').textContent = this.score;
-            document.getElementById('livesBar').style.width = (this.lives / 50 * 100) + '%';
+            document.getElementById('livesBar').style.width = (this.lives / 25 * 100) + '%';
             document.getElementById('powerFill').style.width = this.power + '%';
             
             // Check for power-up activation
@@ -1034,7 +1042,7 @@
             
             this.isPlaying = true;
             this.score = 0;
-            this.lives = 50; // Reset to 50
+            this.lives = 25; // Reset to 25
             this.combo = 0;
             this.streak = 0;
             this.power = 0;
