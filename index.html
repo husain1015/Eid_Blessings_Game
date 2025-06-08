@@ -576,14 +576,14 @@
     class EidNightSky {
         constructor() {
             this.score = 0;
-            this.lives = 200;
+            this.lives = 150; // Reduced from 200
             this.combo = 0;
             this.streak = 0;
             this.power = 0;
             this.isPlaying = false;
             this.isPaused = false;
-            this.spawnRate = 1000;
-            this.baseSpeed = 3000;
+            this.spawnRate = 800; // Faster initial spawn
+            this.baseSpeed = 2500; // Shorter lifetime
             this.touchStart = null;
             this.activePowerUp = null;
             this.blessings = [];
@@ -709,7 +709,7 @@
                 
                 const distance = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
                 
-                if (distance < 40 && !blessing.collected) {
+                if (distance < 35 && !blessing.collected) { // Smaller hit area
                     this.collectBlessing(blessing);
                 }
             });
@@ -726,16 +726,16 @@
             const rand = Math.random();
             let type, value;
             
-            if (rand < 0.05) { // 5% special
+            if (rand < 0.03) { // 3% special (was 5%)
                 type = 'special';
                 value = 50;
-            } else if (rand < 0.2) { // 15% gem
+            } else if (rand < 0.15) { // 12% gem (was 15%)
                 type = 'gem';
                 value = 10;
-            } else if (rand < 0.5) { // 30% star
+            } else if (rand < 0.4) { // 25% star (was 30%)
                 type = 'star';
                 value = 5;
-            } else { // 50% moon
+            } else { // 60% moon (was 50%)
                 type = 'moon';
                 value = 1;
             }
@@ -744,7 +744,7 @@
             blessing.dataset.value = value;
             
             // Random position with edge bias for risk/reward
-            const edge = Math.random() < 0.3;
+            const edge = Math.random() < 0.4; // Increased edge spawn chance
             if (edge) {
                 // Spawn at edges for higher risk/reward
                 if (Math.random() < 0.5) {
@@ -769,7 +769,7 @@
             gameArea.appendChild(blessing);
             
             // Auto-remove after lifetime
-            const lifetime = type === 'special' ? 2000 : this.baseSpeed;
+            const lifetime = type === 'special' ? 1500 : this.baseSpeed; // Special items disappear faster
             setTimeout(() => {
                 if (blessing.parentElement && !blessing.collected) {
                     this.missBlessing(blessing);
@@ -787,7 +787,7 @@
             
             this.combo++;
             this.streak++;
-            this.power = Math.min(100, this.power + 5);
+            this.power = Math.min(100, this.power + 3); // Slower power gain
             
             // Update displays
             this.updateDisplay();
@@ -881,9 +881,9 @@
         }
 
         adjustDifficulty() {
-            // Progressive difficulty
-            this.spawnRate = Math.max(300, this.spawnRate - 10);
-            this.baseSpeed = Math.max(1500, this.baseSpeed - 20);
+            // Progressive difficulty - faster ramp up
+            this.spawnRate = Math.max(200, this.spawnRate - 20); // Minimum 200ms between spawns
+            this.baseSpeed = Math.max(1000, this.baseSpeed - 30); // Minimum 1 second lifetime
             
             // Clear and reset spawn interval
             clearInterval(this.spawnInterval);
@@ -961,7 +961,7 @@
 
         updateDisplay() {
             document.getElementById('score').textContent = this.score;
-            document.getElementById('livesBar').style.width = (this.lives / 200 * 100) + '%';
+            document.getElementById('livesBar').style.width = (this.lives / 150 * 100) + '%';
             document.getElementById('powerFill').style.width = this.power + '%';
             
             // Check for power-up activation
@@ -986,12 +986,12 @@
             
             this.isPlaying = true;
             this.score = 0;
-            this.lives = 200;
+            this.lives = 150; // Reset to 150
             this.combo = 0;
             this.streak = 0;
             this.power = 0;
-            this.spawnRate = 1000;
-            this.baseSpeed = 3000;
+            this.spawnRate = 800; // Reset to harder initial spawn
+            this.baseSpeed = 2500; // Reset to shorter lifetime
             
             document.getElementById('startBtn').disabled = true;
             document.getElementById('pauseBtn').disabled = false;
