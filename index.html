@@ -860,28 +860,11 @@
             
             this.updateDisplay();
             
-            // Show warning messages at critical points
-            if (this.lives === 15) {
-                this.showMessage("⚠️ 15 lives remaining!");
-                document.getElementById('gameContainer').classList.add('screen-shake');
-                setTimeout(() => {
-                    document.getElementById('gameContainer').classList.remove('screen-shake');
-                }, 500);
-            } else if (this.lives === 10) {
-                this.showMessage("🔥 DANGER! Only 10 lives!");
-                document.getElementById('gameContainer').classList.add('screen-shake');
-                setTimeout(() => {
-                    document.getElementById('gameContainer').classList.remove('screen-shake');
-                }, 500);
-            } else if (this.lives === 5) {
-                this.showMessage("💀 CRITICAL! 5 LIVES LEFT!");
-                document.getElementById('gameContainer').classList.add('screen-shake');
-                setTimeout(() => {
-                    document.getElementById('gameContainer').classList.remove('screen-shake');
-                }, 500);
-                // Make the lives bar pulse red
-                document.getElementById('livesBar').style.animation = 'pulse 0.5s infinite';
-            }
+            // Screen shake effect only
+            document.getElementById('gameContainer').classList.add('screen-shake');
+            setTimeout(() => {
+                document.getElementById('gameContainer').classList.remove('screen-shake');
+            }, 500);
             
             // Audio feedback
             this.playSound([220], 0.3);
