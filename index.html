@@ -30,6 +30,7 @@
         font-family: 'Rubik', sans-serif;
         background: #0a0a0a;
         touch-action: none;
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
     }
 
     .game-container {
@@ -598,31 +599,59 @@
         }
 
         setupAudio() {
-            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            this.masterGain = this.audioCtx.createGain();
-            this.masterGain.gain.value = 0.3;
-            this.masterGain.connect(this.audioCtx.destination);
+            // Safari requires user interaction to create AudioContext
+            this.audioCtx = null;
+            this.masterGain = null;
+            this.audioInitialized = false;
+        }
+
+        initAudioContext() {
+            if (this.audioInitialized) return;
+            
+            try {
+                // Create AudioContext on first user interaction
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                this.audioCtx = new AudioContext();
+                this.masterGain = this.audioCtx.createGain();
+                this.masterGain.gain.value = 0.3;
+                this.masterGain.connect(this.audioCtx.destination);
+                
+                // Resume context if suspended (Safari requirement)
+                if (this.audioCtx.state === 'suspended') {
+                    this.audioCtx.resume();
+                }
+                
+                this.audioInitialized = true;
+            } catch (e) {
+                console.log('Audio not supported');
+            }
         }
 
         playSound(frequencies, duration = 0.1) {
-            frequencies.forEach((freq, i) => {
-                setTimeout(() => {
-                    const osc = this.audioCtx.createOscillator();
-                    const gain = this.audioCtx.createGain();
-                    
-                    osc.connect(gain);
-                    gain.connect(this.masterGain);
-                    
-                    osc.frequency.value = freq;
-                    osc.type = 'sine';
-                    
-                    gain.gain.setValueAtTime(0.3, this.audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + duration);
-                    
-                    osc.start();
-                    osc.stop(this.audioCtx.currentTime + duration);
-                }, i * 50);
-            });
+            if (!this.audioInitialized || !this.audioCtx) return;
+            
+            try {
+                frequencies.forEach((freq, i) => {
+                    setTimeout(() => {
+                        const osc = this.audioCtx.createOscillator();
+                        const gain = this.audioCtx.createGain();
+                        
+                        osc.connect(gain);
+                        gain.connect(this.masterGain);
+                        
+                        osc.frequency.value = freq;
+                        osc.type = 'sine';
+                        
+                        gain.gain.setValueAtTime(0.3, this.audioCtx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + duration);
+                        
+                        osc.start();
+                        osc.stop(this.audioCtx.currentTime + duration);
+                    }, i * 50);
+                });
+            } catch (e) {
+                // Silently fail if audio doesn't work
+            }
         }
 
         createStars() {
@@ -647,6 +676,7 @@
 
             const startDrawing = (e) => {
                 if (!this.isPlaying || this.isPaused) return;
+                e.preventDefault(); // Prevent Safari bounce
                 isDrawing = true;
                 const touch = e.touches ? e.touches[0] : e;
                 lastX = touch.clientX;
@@ -655,6 +685,7 @@
 
             const draw = (e) => {
                 if (!isDrawing) return;
+                e.preventDefault(); // Prevent Safari bounce
                 
                 const touch = e.touches ? e.touches[0] : e;
                 const currentX = touch.clientX;
@@ -670,7 +701,8 @@
                 lastY = currentY;
             };
 
-            const stopDrawing = () => {
+            const stopDrawing = (e) => {
+                if (e) e.preventDefault(); // Prevent Safari bounce
                 isDrawing = false;
             };
 
@@ -761,10 +793,14 @@
             }
             
             // Click/tap handler for individual collection
-            blessing.addEventListener('click', (e) => {
+            const collectHandler = (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 this.collectBlessing(blessing);
-            });
+            };
+            
+            blessing.addEventListener('touchstart', collectHandler, {passive: false});
+            blessing.addEventListener('click', collectHandler);
             
             gameArea.appendChild(blessing);
             
@@ -984,6 +1020,9 @@
         start() {
             if (this.isPlaying) return;
             
+            // Initialize audio on first user interaction (Safari requirement)
+            this.initAudioContext();
+            
             this.isPlaying = true;
             this.score = 0;
             this.lives = 150; // Reset to 150
@@ -1056,8 +1095,25 @@
     // Initialize game
     const game = new EidNightSky();
     
-    // Prevent scrolling
+    // Prevent scrolling and zooming on iOS
     document.addEventListener('touchmove', e => e.preventDefault(), {passive: false});
+    document.addEventListener('gesturestart', e => e.preventDefault());
+    document.addEventListener('gesturechange', e => e.preventDefault());
+    
+    // iOS viewport fix
+    window.addEventListener('load', () => {
+        // Prevent bounce on iOS
+        document.body.addEventListener('touchmove', e => e.preventDefault(), {passive: false});
+        
+        // Fix viewport height on iOS
+        const setVH = () => {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        };
+        setVH();
+        window.addEventListener('resize', setVH);
+        window.addEventListener('orientationchange', setVH);
+    });
 </script>
 ```
 
